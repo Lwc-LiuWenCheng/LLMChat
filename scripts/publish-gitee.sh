@@ -19,21 +19,36 @@ set -euo pipefail
 API="https://gitee.com/api/v5/repos/${GITEE_OWNER}/${GITEE_REPO}"
 NOTE="LLMChat ${RELEASE_VERSION} (Windows x64)。-full.zip 自包含开箱即用；-small.zip 框架依赖需装 .NET 10 Desktop Runtime。校验见 SHA256SUMS.txt。"
 
-# GET：token 走 query string（Gitee 要求 access_token 参数）
-gget() {
-  local url="$1"
-  curl -sS --fail --retry 3 --retry-delay 3 "${url}?access_token=${GITEE_TOKEN}"
+# 统一 API 调用：打印 HTTP 状态与响应体，失败时可见真实错误（不再被 --fail 吞掉）。
+# 用法：req <METHOD> <url> [curl 额外参数...]；成功时 stdout 仅输出响应体。
+req() {
+  local method="$1"; shift
+  local url="$1"; shift
+  local resp status body
+  resp="$(curl -sS --retry 3 --retry-delay 3 -X "$method" \
+    "$@" "$url" -w $'\n%{http_code}')" || {
+      echo "请求失败（网络层）：$method $url" >&2
+      return 1
+    }
+  status="${resp##*$'\n'}"
+  body="${resp%$'\n'*}"
+  if [[ "$status" -lt 200 || "$status" -ge 300 ]]; then
+    echo "HTTP $status :: $method $url" >&2
+    echo "响应体：${body:0:500}" >&2
+    return 1
+  fi
+  printf '%s' "$body"
 }
 
-# POST：token 走表单
+# token 同时放 query（Gitee 部分接口只认 query）与表单。
+gget() { req GET "$1?access_token=${GITEE_TOKEN}"; }
 gpost() {
   local url="$1"; shift
-  curl -sS --fail --retry 3 --retry-delay 3 -X POST \
-    -F "access_token=${GITEE_TOKEN}" "$@" "$url"
+  req POST "${url}?access_token=${GITEE_TOKEN}" -F "access_token=${GITEE_TOKEN}" "$@"
 }
 
 echo "==> 确保 Gitee 仓库有初始 commit（空仓库无法建 Release）"
-branch="$(gget "$API" | python3 -c 'import sys,json;print(json.load(sys.stdin).get("default_branch") or "")')"
+branch="$(gget "$API" 2>/dev/null | python3 -c 'import sys,json;print(json.load(sys.stdin).get("default_branch") or "")' 2>/dev/null || true)"
 if [[ -z "$branch" ]]; then
   echo "仓库为空，创建初始 README..."
   gpost "$API/contents/README.md" \
@@ -50,7 +65,7 @@ release_id="$(gget "$API/releases/tags/$RELEASE_TAG" 2>/dev/null \
 try:
     print(json.load(sys.stdin).get("id") or "")
 except Exception:
-    print("")' || true)"
+    print("")' 2>/dev/null || true)"
 
 if [[ -z "$release_id" ]]; then
   echo "创建 Release..."
@@ -71,19 +86,20 @@ uploaded=0
 for f in "$DIST_DIR"/*.zip "$DIST_DIR"/SHA256SUMS.txt; do
   [[ -f "$f" ]] || continue
   name="$(basename "$f")"
-  existing="$(gget "$API/releases/$release_id/assets" 2>/dev/null \
+  # 查询已有附件（容错：查询失败当作"没有"，直接尝试上传）
+  existing="$(gget "$API/releases/$release_id/attach_files" 2>/dev/null \
     | N="$name" python3 -c 'import sys,json,os
 try:
     names=[a.get("name") for a in json.load(sys.stdin)]
     print("yes" if os.environ["N"] in names else "no")
 except Exception:
-    print("no")')"
+    print("no")' 2>/dev/null || echo "no")"
   if [[ "$existing" == "yes" ]]; then
     echo "  跳过已存在：$name"
     continue
   fi
   echo "  上传：$name ($(du -h "$f" | cut -f1))"
-  gpost "$API/releases/$release_id/assets" -F "file=@$f" >/dev/null
+  gpost "$API/releases/$release_id/attach_files" -F "file=@$f" >/dev/null
   uploaded=$((uploaded + 1))
 done
 
