@@ -113,11 +113,36 @@ jobs:
       # full 是单文件包：插件被 IncludeAllContentForSelfExtract 打进 LLMChat.exe，
       # 磁盘上没有松散的插件文件，必须运行打包后的 exe 自检来证明插件真的被带上了。
       # small 是框架依赖包：插件是松散文件，直接跑 dll 自检同样能验证。
+      # 关键：App 用 ALC + LoadFromAssemblyPath + AssemblyDependencyResolver 加载插件，
+      # 要求插件 dll 是磁盘上的松散文件。publish 的自定义 target 在单文件下会把 dll 打进
+      # bundle（ALC 读不到），框架依赖下又会被重复解析丢弃——因此在 CI 侧按已知产物
+      # 显式组装 plugins/<id>/<version>/，保证两个包都带可加载的插件文件。
+      - name: 组装插件目录（从插件 Release 产物复制）
+        shell: bash
+        run: |
+          PLUGINS=(
+            "chat.provider.deepseek:Chat.Providers.DeepSeek"
+            "chat.provider.openai:Chat.Providers.OpenAiCompatible"
+            "chat.provider.opencodego:Chat.Providers.OpenCodeGo"
+          )
+          for d in full small; do
+            for spec in "${PLUGINS[@]}"; do
+              id="${spec%%:*}"; proj="${spec#*:}"
+              src="src/$proj/bin/Release/net10.0"
+              dst="out/$d/plugins/$id/1.0.0"
+              mkdir -p "$dst"
+              cp "$src/$id.dll" "$dst/"
+              cp "$src/$id.deps.json" "$dst/"
+              cp "$src/$id.runtimeconfig.json" "$dst/"
+              cp "$src/manifest.json" "$dst/"
+            done
+          done
+          echo "--- 组装后的插件树 ---"
+          find out -path '*/plugins/*' -type f | sort
+
       - name: 校验两个包（运行打包产物的 selftest）
         shell: bash
         run: |
-          echo "--- 输出树（诊断用） ---"
-          find out -type f \( -iname '*deepseek*' -o -iname '*openai*' -o -iname '*opencodego*' -o -iname 'manifest.json' \) | sort
           echo "--- full 单文件包 selftest ---"
           ./out/full/LLMChat.exe --selftest | tee full-selftest.log
           grep -q '3 loaded, 0 failed' full-selftest.log
