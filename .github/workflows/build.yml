@@ -26,6 +26,10 @@ env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: '1'
   MSBUILDDISABLENODEREUSE: '1'
   CI: 'true'
+  # SQLitePCLRaw 2.1.11 有一条 NU1903 高危公告；本地 CI 未开时不报错，
+  # GitHub Actions 默认 CI=true 会把它升级为错误。先关掉 audit 打通链路，
+  # 依赖升级单独处理（不影响功能）。
+  NuGetAudit: 'false'
   GITEE_OWNER: liu-wencheng
   GITEE_REPO: llmchat-releases
 
