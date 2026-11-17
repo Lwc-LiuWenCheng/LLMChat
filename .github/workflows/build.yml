@@ -101,20 +101,32 @@ jobs:
             -p:PublishSingleFile=true -p:IncludeAllContentForSelfExtract=true `
             -p:TreatWarningsAsErrors=false -o out/full
 
+      # 三个插件通过 ProjectReference 仅用于构建排序，但它们的 manifest.json/dll
+      # 仍会流到发布根目录产生同名冲突（NETSDK1152）。插件实际由自定义 target
+      # 放到 plugins/<id>/<version>/（运行时也只扫这里），根目录副本是多余的，
+      # 故关闭重复输出报错。-full 因单文件打包不冲突，这里统一关掉保持一致。
       - name: publish 框架依赖小包
         run: |
           dotnet publish src/Chat.App -c Release -r win-x64 --self-contained false `
-            -p:TreatWarningsAsErrors=false -o out/small
+            -p:TreatWarningsAsErrors=false -p:ErrorOnDuplicatePublishOutputFiles=false -o out/small
 
-      - name: 校验两个包插件齐全
+      # full 是单文件包：插件被 IncludeAllContentForSelfExtract 打进 LLMChat.exe，
+      # 磁盘上没有松散的插件文件，必须运行打包后的 exe 自检来证明插件真的被带上了。
+      # small 是框架依赖包：插件是松散文件，直接跑 dll 自检同样能验证。
+      - name: 校验两个包（运行打包产物的 selftest）
         shell: bash
         run: |
-          for d in full small; do
-            for p in chat.provider.deepseek chat.provider.openai chat.provider.opencodego; do
-              test -f "out/$d/plugins/$p/1.0.0/$p.dll" || { echo "MISSING $d/plugins/$p"; exit 1; }
-            done
+          echo "--- small 包松散插件文件 ---"
+          for p in chat.provider.deepseek chat.provider.openai chat.provider.opencodego; do
+            test -f "out/small/plugins/$p/1.0.0/$p.dll" || { echo "MISSING small/plugins/$p"; exit 1; }
           done
-          echo "plugins OK in both packages"
+          echo "--- full 单文件包 selftest ---"
+          ./out/full/LLMChat.exe --selftest | tee full-selftest.log
+          grep -q '3 loaded, 0 failed' full-selftest.log
+          echo "--- small 包 selftest ---"
+          dotnet out/small/LLMChat.dll --selftest | tee small-selftest.log
+          grep -q '3 loaded, 0 failed' small-selftest.log
+          echo "两个包插件验证通过"
 
       - name: 打 zip + 生成 SHA256SUMS
         shell: pwsh
