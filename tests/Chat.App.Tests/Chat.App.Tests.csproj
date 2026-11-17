@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>Chat.App.Tests</RootNamespace>
+    <!-- 与 Chat.App 保持一致：视图的绑定全是运行时绑定，测试要在真实 XAML 上验证它们。 -->
+    <AvaloniaUseCompiledBindingsByDefault>false</AvaloniaUseCompiledBindingsByDefault>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia.Headless" />
+    <PackageReference Include="xunit.v3" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Chat.App/Chat.App.csproj" />
+  </ItemGroup>
+
+  <!-- 与 Chat.App 的打包逻辑一致：src/ 下任何带 manifest.json 的插件工程都算内置插件，
+       按 manifest 的 id / version / entryAssembly 复制到测试输出目录的 plugins/<id>/<version>/，
+       这样 AppServices 扫描 AppContext.BaseDirectory/plugins 时能真实加载全部 provider。
+       Chat.App 已通过 ProjectReference 保证这些插件工程先于本项目的复制目标构建。 -->
+  <ItemGroup>
+    <TestBuiltinPluginManifest Include="$(MSBuildThisFileDirectory)../../src/*/manifest.json">
+      <PluginDirectory>%(RootDir)%(Directory)</PluginDirectory>
+      <PluginId>$([System.Text.RegularExpressions.Regex]::Replace($([System.IO.File]::ReadAllText('%(FullPath)')), '^[\s\S]*?"id"\s*:\s*"([^"]+)"[\s\S]*$', '$1'))</PluginId>
+      <PluginVersion>$([System.Text.RegularExpressions.Regex]::Replace($([System.IO.File]::ReadAllText('%(FullPath)')), '^[\s\S]*?"version"\s*:\s*"([^"]+)"[\s\S]*$', '$1'))</PluginVersion>
+      <PluginAssembly>$([System.Text.RegularExpressions.Regex]::Replace($([System.IO.File]::ReadAllText('%(FullPath)')), '^[\s\S]*?"entryAssembly"\s*:\s*"([^"]+)"[\s\S]*$', '$1'))</PluginAssembly>
+    </TestBuiltinPluginManifest>
+  </ItemGroup>
+
+  <Target Name="CopyBuiltinPluginsForTests" AfterTargets="Build">
+    <ItemGroup>
+      <TestBuiltinPluginFiles Include="@(TestBuiltinPluginManifest->'%(PluginDirectory)bin/$(Configuration)/$(TargetFramework)/%(PluginAssembly)')" />
+      <TestBuiltinPluginFiles Include="@(TestBuiltinPluginManifest->'%(PluginDirectory)bin/$(Configuration)/$(TargetFramework)/manifest.json')" />
+    </ItemGroup>
+    <Copy SourceFiles="@(TestBuiltinPluginFiles)" DestinationFolder="$(OutDir)plugins/%(PluginId)/%(PluginVersion)" SkipUnchangedFiles="true" />
+  </Target>
+</Project>

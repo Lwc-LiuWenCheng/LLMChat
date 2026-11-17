@@ -1,0 +1,60 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Chat.App</RootNamespace>
+    <AssemblyName>LLMChat</AssemblyName>
+    <AvaloniaUseCompiledBindingsByDefault>false</AvaloniaUseCompiledBindingsByDefault>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Desktop" />
+    <PackageReference Include="Avalonia.Themes.Fluent" />
+    <PackageReference Include="Avalonia.Fonts.Inter" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="Markdig" />
+    <ProjectReference Include="../Chat.Abstractions/Chat.Abstractions.csproj" />
+    <ProjectReference Include="../Chat.Core/Chat.Core.csproj" />
+    <ProjectReference Include="../Chat.Storage/Chat.Storage.csproj" />
+    <ProjectReference Include="../Chat.Kernel/Chat.Kernel.csproj" />
+    <ProjectReference Include="../Chat.Providers.DeepSeek/Chat.Providers.DeepSeek.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../Chat.Providers.OpenAiCompatible/Chat.Providers.OpenAiCompatible.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../Chat.Providers.OpenCodeGo/Chat.Providers.OpenCodeGo.csproj" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <!-- 内置插件：src/ 下任何带 manifest.json 的插件工程都算内置插件（新增插件工程无需改本文件）。
+       manifest 是插件的唯一身份来源：构建后按其中的 id / version / entryAssembly 把产物复制到
+       $(OutDir)plugins/<id>/<version>/，运行时由 PluginCatalog 扫描；插件与主程序只共享 Chat.Abstractions。
+       MSBuild 没有 JSON 解析器，这里用 Regex.Replace 的 $1 反向引用取字段，不依赖 manifest 的排版。 -->
+  <ItemGroup>
+    <BuiltinPluginManifest Include="$(MSBuildThisFileDirectory)../*/manifest.json">
+      <PluginDirectory>%(RootDir)%(Directory)</PluginDirectory>
+      <PluginId>$([System.Text.RegularExpressions.Regex]::Replace($([System.IO.File]::ReadAllText('%(FullPath)')), '^[\s\S]*?"id"\s*:\s*"([^"]+)"[\s\S]*$', '$1'))</PluginId>
+      <PluginVersion>$([System.Text.RegularExpressions.Regex]::Replace($([System.IO.File]::ReadAllText('%(FullPath)')), '^[\s\S]*?"version"\s*:\s*"([^"]+)"[\s\S]*$', '$1'))</PluginVersion>
+      <PluginAssembly>$([System.Text.RegularExpressions.Regex]::Replace($([System.IO.File]::ReadAllText('%(FullPath)')), '^[\s\S]*?"entryAssembly"\s*:\s*"([^"]+)"[\s\S]*$', '$1'))</PluginAssembly>
+    </BuiltinPluginManifest>
+  </ItemGroup>
+
+  <Target Name="CopyBuiltinPlugins" AfterTargets="Build">
+    <ItemGroup>
+      <BuiltinPluginFiles Include="@(BuiltinPluginManifest->'%(PluginDirectory)bin/$(Configuration)/$(TargetFramework)/%(PluginAssembly)')" />
+      <BuiltinPluginFiles Include="@(BuiltinPluginManifest->'%(PluginDirectory)bin/$(Configuration)/$(TargetFramework)/manifest.json')" />
+    </ItemGroup>
+    <Copy SourceFiles="@(BuiltinPluginFiles)" DestinationFolder="$(OutDir)plugins/%(PluginId)/%(PluginVersion)" SkipUnchangedFiles="true" />
+  </Target>
+
+  <!-- 发布（含单文件）：把内置插件加入 ResolvedFileToPublish，相对路径 plugins/<id>/<version>/。
+       单文件发布时配合 IncludeAllContentForSelfExtract=true，插件随 exe 一起解压到运行目录，
+       自检子命令与运行时 PluginCatalog 仍按 AppContext.BaseDirectory/plugins 找到它们。 -->
+  <Target Name="IncludeBuiltinPluginsInPublish" BeforeTargets="ComputeFilesToPublish" DependsOnTargets="Build">
+    <ItemGroup>
+      <_BuiltinPluginPublish Include="@(BuiltinPluginManifest->'%(PluginDirectory)bin/$(Configuration)/$(TargetFramework)/%(PluginAssembly)')">
+        <RelativePath>plugins/%(PluginId)/%(PluginVersion)/%(Filename)%(Extension)</RelativePath>
+      </_BuiltinPluginPublish>
+      <_BuiltinPluginPublish Include="@(BuiltinPluginManifest->'%(PluginDirectory)bin/$(Configuration)/$(TargetFramework)/manifest.json')">
+        <RelativePath>plugins/%(PluginId)/%(PluginVersion)/manifest.json</RelativePath>
+      </_BuiltinPluginPublish>
+      <ResolvedFileToPublish Include="@(_BuiltinPluginPublish)" Condition="Exists('%(FullPath)')" />
+    </ItemGroup>
+  </Target>
+</Project>

@@ -1,0 +1,11 @@
+{
+  "id": "chat.provider.openai",
+  "displayName": "OpenAI 兼容（GLM / MiniMax）",
+  "version": "1.0.0",
+  "apiVersion": "1.0",
+  "minAppVersion": "0.1.0",
+  "platforms": [],
+  "entryAssembly": "chat.provider.openai.dll",
+  "providerTypes": ["Chat.Providers.OpenAiCompatible.OpenAiCompatibleProvider"],
+  "listedByDefault": true
+}

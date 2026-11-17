@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>Chat.Abstractions</RootNamespace>
+    <IsPackable>true</IsPackable>
+    <PackageId>Chat.Abstractions</PackageId>
+    <Description>插件契约包：provider 接口、事件流、能力描述。主程序与插件共用，只增不改。</Description>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>Chat.Kernel.Tests</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="xunit.v3" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Chat.Kernel/Chat.Kernel.csproj" />
+    <ProjectReference Include="../../src/Chat.Providers.DeepSeek/Chat.Providers.DeepSeek.csproj" />
+  </ItemGroup>
+</Project>

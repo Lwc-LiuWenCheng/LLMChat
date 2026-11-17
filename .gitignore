@@ -1,0 +1,18 @@
+bin/
+obj/
+*.user
+*.suo
+.vs/
+.idea/
+artifacts/
+dist/
+# 运行时数据（插件安装、日志、本地 DB）不进仓库
+local/
+*.db
+*.db-wal
+*.db-shm
+
+# 本地开发工具内部状态（不是应用源码，不进公开仓库）
+.agent-teams/
+.wiki/
+PROJECT_MEMORY.md
