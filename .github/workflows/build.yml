@@ -1,0 +1,205 @@
+name: build-and-publish
+
+# LLMChat 云端构建 + 国内分发（路线 A）
+#   - test    : ubuntu 上 build + 六套测试 + 插件 selftest 门禁
+#   - package : windows 上产出两个 win-x64 包（自包含单文件 / 框架依赖小包）
+#   - release : tag 推送时，双发 GitHub Release + Gitee Release
+# workflow_dispatch 默认只构建验证（dry run）；勾选 publish 才会发布。
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: '发布到 Gitee + GitHub Release（默认仅构建验证）'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+  DOTNET_NOLOGO: '1'
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: '1'
+  MSBUILDDISABLENODEREUSE: '1'
+  CI: 'true'
+  GITEE_OWNER: liu-wencheng
+  GITEE_REPO: llmchat-releases
+
+jobs:
+  test:
+    name: 构建与测试
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      # 去掉本机专用的 NuGet 缓存路径，否则 runner 上还原会失败
+      - name: 适配 CI 的 NuGet 配置
+        run: sed -i '/globalPackagesFolder/d' NuGet.config
+
+      - name: restore
+        run: dotnet restore Chat.slnx
+
+      - name: build
+        run: dotnet build Chat.slnx -c Debug --no-restore
+
+      - name: 六套测试
+        run: bash scripts/test.sh
+
+      - name: 插件自检门禁（必须 3 loaded, 0 failed）
+        run: |
+          dotnet src/Chat.App/bin/Debug/net10.0/LLMChat.dll --selftest | tee selftest.log
+          grep -q '3 loaded, 0 failed' selftest.log
+
+  package:
+    name: 打包 win-x64
+    needs: test
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: 适配 CI 的 NuGet 配置
+        shell: bash
+        run: sed -i '/globalPackagesFolder/d' NuGet.config
+
+      - name: 计算版本号与 tag
+        id: ver
+        shell: bash
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            TAG="$GITHUB_REF_NAME"
+          else
+            TAG="v0.0.0-manual-${GITHUB_RUN_NUMBER}"
+          fi
+          VERSION="${TAG#v}"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      # 先 build 整个 solution，确保三个 provider 插件的 dll 已产出，
+      # 否则 Chat.App 的 IncludeBuiltinPluginsInPublish target 取不到文件。
+      # win-x64 上可能有本机未见过的平台警告；阶段一只求打通链路，
+      # 这里单独关掉警告即错误（CI=true 默认开启），不影响确定性构建。
+      - name: build solution（含插件）
+        run: dotnet build Chat.slnx -c Release -p:TreatWarningsAsErrors=false
+
+      - name: publish 自包含单文件版
+        run: |
+          dotnet publish src/Chat.App -c Release -r win-x64 --self-contained true `
+            -p:PublishSingleFile=true -p:IncludeAllContentForSelfExtract=true `
+            -p:TreatWarningsAsErrors=false -o out/full
+
+      - name: publish 框架依赖小包
+        run: |
+          dotnet publish src/Chat.App -c Release -r win-x64 --self-contained false `
+            -p:TreatWarningsAsErrors=false -o out/small
+
+      - name: 校验两个包插件齐全
+        shell: bash
+        run: |
+          for d in full small; do
+            for p in chat.provider.deepseek chat.provider.openai chat.provider.opencodego; do
+              test -f "out/$d/plugins/$p/1.0.0/$p.dll" || { echo "MISSING $d/plugins/$p"; exit 1; }
+            done
+          done
+          echo "plugins OK in both packages"
+
+      - name: 打 zip + 生成 SHA256SUMS
+        shell: pwsh
+        run: |
+          $v = "${{ steps.ver.outputs.version }}"
+          $zipFull  = "LLMChat-$v-win-x64-full.zip"
+          $zipSmall = "LLMChat-$v-win-x64-small.zip"
+          Compress-Archive -Path out/full/*  -DestinationPath $zipFull
+          Compress-Archive -Path out/small/* -DestinationPath $zipSmall
+          $lines = @()
+          foreach ($f in @($zipFull, $zipSmall)) {
+            $h = (Get-FileHash -Algorithm SHA256 $f).Hash.ToLower()
+            $lines += "$h  $f"
+          }
+          $lines | Set-Content SHA256SUMS.txt
+          Get-Content SHA256SUMS.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: |
+            *.zip
+            SHA256SUMS.txt
+
+  release:
+    name: 发布到 GitHub + Gitee
+    needs: [test, package]
+    if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && inputs.publish)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+      - name: 计算版本号与 tag
+        id: ver
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            TAG="$GITHUB_REF_NAME"
+          else
+            TAG="v0.0.0-manual-${GITHUB_RUN_NUMBER}"
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
+
+      - name: 生成 Release 说明
+        id: notes
+        run: |
+          cat > release-notes.md <<EOF
+          ## LLMChat ${{ steps.ver.outputs.version }} (Windows x64)
+
+          本地会话永久保存的 Avalonia 聊天客户端：多 provider 插件、会话树/分支、流式 Markdown、ZIP 导入导出。
+
+          ### 下载选哪个？
+          | 包 | 说明 |
+          |---|---|
+          | \`-full.zip\` | **自包含单文件**，开箱即用，无需安装 .NET |
+          | \`-small.zip\` | **框架依赖小包**，需先装 [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/10.0) |
+
+          两个包都内置 DeepSeek / OpenAI 兼容 / OpenCode Go 三个插件。
+
+          ### 校验
+          \`\`\`powershell
+          Get-FileHash -Algorithm SHA256 .\\LLMChat-*.zip
+          # 与 SHA256SUMS.txt 对比
+          \`\`\`
+
+          源码：https://github.com/Lwc-LiuWenCheng/LLMChat
+          EOF
+          echo "done"
+
+      - name: GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.ver.outputs.tag }}
+          VERSION: ${{ steps.ver.outputs.version }}
+        run: |
+          gh release create "$TAG" dist/*.zip dist/SHA256SUMS.txt \
+            --title "LLMChat $VERSION" \
+            --notes-file release-notes.md
+
+      - name: Gitee Release（国内加速）
+        env:
+          GITEE_TOKEN: ${{ secrets.LLM_CHAT_GITEE }}
+          GITEE_OWNER: ${{ env.GITEE_OWNER }}
+          GITEE_REPO: ${{ env.GITEE_REPO }}
+          RELEASE_TAG: ${{ steps.ver.outputs.tag }}
+          RELEASE_VERSION: ${{ steps.ver.outputs.version }}
+          DIST_DIR: dist
+        run: bash scripts/publish-gitee.sh
