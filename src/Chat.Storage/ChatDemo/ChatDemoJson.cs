@@ -116,23 +116,24 @@ internal static class ChatDemoJson
     /// <summary>读取 FILE 片段/本地附件元数据里的文件信息。</summary>
     public static ChatDemoFileInfo ReadFileInfo(string? metaJson)
     {
-        if (string.IsNullOrWhiteSpace(metaJson)) return new ChatDemoFileInfo(null, null, null, null, null, null);
+        if (string.IsNullOrWhiteSpace(metaJson)) return new ChatDemoFileInfo(null, null, null, null, null, null, null);
         try
         {
             using var document = JsonDocument.Parse(metaJson);
             var root = document.RootElement;
-            if (root.ValueKind != JsonValueKind.Object) return new ChatDemoFileInfo(null, null, null, null, null, null);
+            if (root.ValueKind != JsonValueKind.Object) return new ChatDemoFileInfo(null, null, null, null, null, null, null);
             return new ChatDemoFileInfo(
                 GetString(root, "fileId", "file_id"),
                 GetString(root, "name", "file_name", "fileName"),
                 GetString(root, "mime", "mimeType", "mime_type"),
                 GetInt64(root, "size", "fileSize", "file_size"),
                 GetString(root, "sha256", "hash"),
-                GetString(root, "relPath", "rel_path", "path"));
+                GetString(root, "relPath", "rel_path", "path"),
+                GetBoolean(root, "isImage", "is_image"));
         }
         catch (JsonException)
         {
-            return new ChatDemoFileInfo(null, null, null, null, null, null);
+            return new ChatDemoFileInfo(null, null, null, null, null, null, null);
         }
     }
 
@@ -144,7 +145,8 @@ internal static class ChatDemoJson
         string? mime,
         long? size,
         string? sha256,
-        string? relativePath)
+        string? relativePath,
+        bool? isImage = null)
     {
         using var buffer = new MemoryStream();
         using (var writer = new Utf8JsonWriter(buffer))
@@ -157,6 +159,7 @@ internal static class ChatDemoJson
             if (size is not null) writer.WriteNumber("size", size.Value);
             if (!string.IsNullOrEmpty(sha256)) writer.WriteString("sha256", sha256);
             if (!string.IsNullOrEmpty(relativePath)) writer.WriteString("relPath", relativePath);
+            if (isImage is not null) writer.WriteBoolean("isImage", isImage.Value);
             if (!string.IsNullOrWhiteSpace(originalJson))
             {
                 writer.WritePropertyName("original");
@@ -262,4 +265,5 @@ internal sealed record ChatDemoFileInfo(
     string? Mime,
     long? Size,
     string? Sha256,
-    string? RelativePath);
+    string? RelativePath,
+    bool? IsImage);

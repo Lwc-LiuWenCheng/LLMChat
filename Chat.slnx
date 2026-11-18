@@ -2,6 +2,7 @@
   <Folder Name="/src/">
     <Project Path="src/Chat.Abstractions/Chat.Abstractions.csproj" />
     <Project Path="src/Chat.App/Chat.App.csproj" />
+    <Project Path="src/Chat.Console/Chat.Console.csproj" />
     <Project Path="src/Chat.Core/Chat.Core.csproj" />
     <Project Path="src/Chat.Kernel/Chat.Kernel.csproj" />
     <Project Path="src/Chat.Providers.DeepSeek/Chat.Providers.DeepSeek.csproj" />
@@ -11,7 +12,9 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Chat.App.Tests/Chat.App.Tests.csproj" />
+    <Project Path="tests/Chat.Console.Tests/Chat.Console.Tests.csproj" />
     <Project Path="tests/Chat.Core.Tests/Chat.Core.Tests.csproj" />
+    <Project Path="tests/Chat.Providers.DeepSeek.Tests/Chat.Providers.DeepSeek.Tests.csproj" />
     <Project Path="tests/Chat.Kernel.Tests/Chat.Kernel.Tests.csproj" />
     <Project Path="tests/Chat.Providers.OpenAiCompatible.Tests/Chat.Providers.OpenAiCompatible.Tests.csproj" />
     <Project Path="tests/Chat.Providers.OpenCodeGo.Tests/Chat.Providers.OpenCodeGo.Tests.csproj" />

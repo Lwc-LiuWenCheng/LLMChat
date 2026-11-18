@@ -280,7 +280,7 @@ public sealed class ChatDemoExportService
             WriteNullableString(json, "provider_id", message.ProviderId);
             WriteNullableString(json, "model", message.Model);
             json.WriteStartArray("fragments");
-            foreach (var part in message.Parts) WriteFragment(json, part, message.Role);
+            WriteFragments(json, message.Parts, message.Role);
             json.WriteEndArray();
             json.WriteEndObject();
         }
@@ -315,6 +315,65 @@ public sealed class ChatDemoExportService
         });
     }
 
+    /// <summary>
+    /// 官方一个 FILE 片段可以带 files 数组里的多个文件；导入时为了按文件匹配附件拆成了多个 part，
+    /// 导出时把相邻且没有独立正文的 File part 重新合并成一个片段，保持官方结构。
+    /// </summary>
+    private static void WriteFragments(Utf8JsonWriter json, IReadOnlyList<ContentPart> parts, MessageRole role)
+    {
+        for (var index = 0; index < parts.Count; index++)
+        {
+            var part = parts[index];
+            if (part.Kind != PartKind.File)
+            {
+                WriteFragment(json, part, role);
+                continue;
+            }
+
+            var files = new List<ContentPart> { part };
+            while (index + 1 < parts.Count &&
+                   parts[index + 1].Kind == PartKind.File &&
+                   string.IsNullOrEmpty(parts[index + 1].Text))
+                files.Add(parts[++index]);
+            WriteFileFragment(json, files);
+        }
+    }
+
+    private static void WriteFileFragment(Utf8JsonWriter json, IReadOnlyList<ContentPart> files)
+    {
+        json.WriteStartObject();
+        json.WriteString("type", "FILE");
+        WriteFilePayload(json, files);
+        json.WriteEndObject();
+    }
+
+    private static void WriteFilePayload(Utf8JsonWriter json, IReadOnlyList<ContentPart> files)
+    {
+        var text = files.Select(file => file.Text).FirstOrDefault(value => !string.IsNullOrEmpty(value));
+        if (!string.IsNullOrEmpty(text)) json.WriteString("content", text);
+        json.WritePropertyName("files");
+        json.WriteStartArray();
+        foreach (var part in files)
+        {
+            var info = ChatDemoJson.ReadFileInfo(part.MetaJson);
+            var fileId = ChatDemoFormat.SanitizeFileName(
+                info.FileId ?? (info.Sha256 is { Length: > 0 } sha ? sha[..Math.Min(8, sha.Length)] : "file"),
+                "file");
+            var fileName = ChatDemoFormat.SanitizeFileName(info.Name ?? fileId, "file");
+            json.WriteStartObject();
+            json.WriteString("id", fileId);
+            json.WriteString("file_name", fileName);
+            if (info.Size is { } size) json.WriteNumber("file_size", size);
+            json.WriteNull("export_path");
+            json.WriteBoolean(
+                "is_image",
+                info.IsImage ?? info.Mime?.StartsWith("image/", StringComparison.OrdinalIgnoreCase) == true);
+            if (info.Mime is not null) json.WriteString("mime_type", info.Mime);
+            json.WriteEndObject();
+        }
+        json.WriteEndArray();
+    }
+
     private static void WriteFragment(Utf8JsonWriter json, ContentPart part, MessageRole role)
     {
         if (part.Kind != PartKind.File && ChatDemoJson.TryWriteOriginalFragment(json, part.MetaJson)) return;
@@ -327,13 +386,7 @@ public sealed class ChatDemoExportService
         switch (part.Kind)
         {
             case PartKind.File:
-                var info = ChatDemoJson.ReadFileInfo(part.MetaJson);
-                if (info.FileId is not null) WriteId(json, "file_id", info.FileId);
-                if (info.Name is not null) json.WriteString("name", info.Name);
-                if (info.Size is { } size) json.WriteNumber("size", size);
-                if (info.Mime is not null) json.WriteString("mime", info.Mime);
-                if (info.Sha256 is not null) json.WriteString("sha256", info.Sha256);
-                if (!string.IsNullOrEmpty(part.Text)) json.WriteString("content", part.Text);
+                WriteFilePayload(json, [part]);
                 break;
             default:
                 if (part.Text is not null) json.WriteString("content", part.Text);
@@ -349,14 +402,6 @@ public sealed class ChatDemoExportService
 
     private static string Hash(string value) =>
         Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(value)));
-
-    private static void WriteId(Utf8JsonWriter json, string name, string value)
-    {
-        if (long.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var numeric))
-            json.WriteNumber(name, numeric);
-        else
-            json.WriteString(name, value);
-    }
 
     private static void WriteRawJson(Utf8JsonWriter writer, string json)
     {

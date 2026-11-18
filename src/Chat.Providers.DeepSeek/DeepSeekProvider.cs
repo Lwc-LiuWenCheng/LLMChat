@@ -68,7 +68,9 @@ public sealed class DeepSeekProvider : IChatProvider
             yield break;
         }
 
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, new Uri(new Uri(BaseUrl(context)), "/messages"));
+        // 必须用字符串拼接而不是 new Uri(base, "/messages")：相对 URI 以前导 '/' 开头会
+        // 重置到 host 根，默认 baseUrl（.../anthropic/v1）会变成 https://api.deepseek.com/messages。
+        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, BaseUrl(context) + "/messages");
         httpRequest.Headers.TryAddWithoutValidation("x-api-key", key);
         httpRequest.Headers.TryAddWithoutValidation("anthropic-version", "2023-06-01");
         httpRequest.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("text/event-stream"));

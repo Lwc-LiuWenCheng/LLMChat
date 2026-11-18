@@ -16,6 +16,8 @@ SUITES=(
   "tests/Chat.App.Tests"
   "tests/Chat.Providers.OpenAiCompatible.Tests"
   "tests/Chat.Providers.OpenCodeGo.Tests"
+  "tests/Chat.Providers.DeepSeek.Tests"
+  "tests/Chat.Console.Tests"
 )
 
 echo "==> dotnet build Chat.slnx -v q"
