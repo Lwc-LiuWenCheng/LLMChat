@@ -1,0 +1,53 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="using:Chat.App.Views"
+             xmlns:suki="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+             mc:Ignorable="d"
+             d:DesignWidth="700"
+             d:DesignHeight="160"
+             x:Class="Chat.App.Views.MessageItemView">
+  <Border>
+    <StackPanel Spacing="6">
+      <Grid ColumnDefinitions="*,Auto">
+        <TextBlock Text="{Binding RoleText}" Classes="muted" FontWeight="SemiBold" />
+        <TextBlock Grid.Column="1"
+                   Text="{Binding StatusText}"
+                   Foreground="{DynamicResource StatusWarnBrush}"
+                   FontSize="12"
+                   IsVisible="{Binding ShowStatus}" />
+      </Grid>
+
+      <Expander IsVisible="{Binding HasThinking}"
+                IsExpanded="{Binding IsThinkingExpanded}"
+                Header="{Binding ThinkingHeader}">
+        <SelectableTextBlock Text="{Binding Thinking}"
+                             TextWrapping="Wrap"
+                             Classes="muted" />
+      </Expander>
+
+      <!-- 助手消息：流式期间用纯文本，避免半截围栏/表格被反复解析造成闪烁重排；
+           生成结束后再切换到由外壳 DataTemplates + Chat.App.Rendering Presenter 渲染的完整 Markdown。 -->
+      <StackPanel IsVisible="{Binding IsAssistant}" Spacing="6">
+        <SelectableTextBlock Text="{Binding Text}"
+                             TextWrapping="Wrap"
+                             IsVisible="{Binding IsStreaming}" />
+        <ItemsControl ItemsSource="{Binding Blocks}" IsVisible="{Binding !IsStreaming}" />
+      </StackPanel>
+
+      <!-- 用户消息：纯文本 -->
+      <SelectableTextBlock Text="{Binding Text}"
+                           TextWrapping="Wrap"
+                           IsVisible="{Binding IsUser}" />
+
+      <!-- 操作栏：命令来自外壳继承的 MainWindowViewModel -->
+      <StackPanel Orientation="Horizontal" Spacing="4">
+        <Button Content="复制" Classes="ghost" Click="OnCopyClicked" />
+        <Button Content="编辑" Classes="ghost" IsVisible="{Binding IsUser}" Click="OnEditClicked" />
+        <Button Content="重新生成" Classes="ghost" IsVisible="{Binding IsAssistant}" Click="OnRegenerateClicked" />
+        <Button Content="重试" Classes="ghost" IsVisible="{Binding CanRetry}" Click="OnRetryClicked" />
+      </StackPanel>
+    </StackPanel>
+  </Border>
+</UserControl>

@@ -1,0 +1,30 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="using:Chat.App.Views"
+             xmlns:suki="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+             mc:Ignorable="d"
+             d:DesignWidth="860"
+             d:DesignHeight="600"
+             x:Class="Chat.App.Views.ConversationView">
+  <DockPanel LastChildFill="True">
+    <!-- Composer 贴底，与 WelcomeView 中的实例共享同一 VM 状态 -->
+    <Border DockPanel.Dock="Bottom" Padding="16,8,16,14" Background="{DynamicResource AppBgBrush}">
+      <local:ComposerView />
+    </Border>
+
+    <ScrollViewer x:Name="MessageScroll"
+                  VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled"
+                  Padding="16,12">
+      <ItemsControl x:Name="MessageItems" ItemsSource="{Binding Messages}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <local:MessageItemView />
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </ScrollViewer>
+  </DockPanel>
+</UserControl>

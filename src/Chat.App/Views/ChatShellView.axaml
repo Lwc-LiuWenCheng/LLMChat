@@ -1,0 +1,119 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="using:Chat.App.Views"
+             xmlns:suki="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+             xmlns:rendering="using:Chat.App.Rendering"
+             xmlns:vm="using:Chat.App.ViewModels"
+             mc:Ignorable="d"
+             d:DesignWidth="1280"
+             d:DesignHeight="800"
+             d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel, IsDesignTimeCreatable=False}"
+             x:Class="Chat.App.Views.ChatShellView"
+             Background="{DynamicResource AppBgBrush}">
+  <!-- 外壳：两列 Grid（侧栏 / 内容区），无顶栏行；主题切换在窗口标题栏，折叠在侧栏内。 -->
+
+  <UserControl.Styles>
+    <!-- 从 MainWindow.axaml 原样迁移的基础样式，供各子控件共享 -->
+    <Style Selector="TextBlock.title">
+      <Setter Property="FontSize" Value="20" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style Selector="TextBlock.muted">
+      <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+      <Setter Property="FontSize" Value="12" />
+    </Style>
+    <Style Selector="Border.msg">
+      <Setter Property="Background" Value="{DynamicResource SurfaceBgBrush}" />
+      <Setter Property="CornerRadius" Value="8" />
+      <Setter Property="Padding" Value="12" />
+      <Setter Property="Margin" Value="0,0,0,10" />
+    </Style>
+    <Style Selector="Border.msg.user">
+      <Setter Property="Background" Value="{DynamicResource UserBubbleBrush}" />
+    </Style>
+    <!-- ghost/accent 按钮样式统一在 App.axaml 定义，这里不再重复，避免两处样式互相覆盖。 -->
+
+    <!-- 内容区居中限宽（宽屏留白、窄屏收缩）。侧栏宽度/遮罩改由 code-behind 直接控制，
+         避免运行时 class 变化时样式重算时机不稳定。 -->
+    <Style Selector="UserControl.wide Border.content-frame">
+      <Setter Property="MaxWidth" Value="860" />
+      <Setter Property="MinWidth" Value="600" />
+      <Setter Property="HorizontalAlignment" Value="Center" />
+    </Style>
+
+  </UserControl.Styles>
+
+
+  <!-- Markdown 渲染模板原样复用 MainWindow.axaml，Presenter 来自 Chat.App.Rendering -->
+  <UserControl.DataTemplates>
+    <DataTemplate DataType="{x:Type rendering:MarkdownHeading}">
+      <rendering:MarkdownHeadingPresenter InlinesSource="{Binding Inlines}" Level="{Binding Level}" Margin="0,6,0,2" />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type rendering:MarkdownParagraph}">
+      <rendering:MarkdownParagraphPresenter InlinesSource="{Binding Inlines}" Margin="0,2" />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type rendering:MarkdownCodeBlock}">
+      <Border Background="{DynamicResource CodeBgBrush}" CornerRadius="6" Padding="10" Margin="0,4">
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+          <SelectableTextBlock Text="{Binding Code}"
+                               FontFamily="Cascadia Mono,Consolas,Menlo,monospace"
+                               FontSize="12"
+                               TextWrapping="NoWrap" />
+        </ScrollViewer>
+      </Border>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type rendering:MarkdownList}">
+      <ItemsControl ItemsSource="{Binding Items}" Margin="0,2">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <Grid ColumnDefinitions="Auto,*">
+              <TextBlock Text="{Binding Marker}" Classes="muted" Margin="0,2,6,0" />
+              <ItemsControl Grid.Column="1" ItemsSource="{Binding Blocks}" />
+            </Grid>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type rendering:MarkdownQuote}">
+      <Border BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="3,0,0,0" Padding="10,0,0,0" Margin="0,4">
+        <ItemsControl ItemsSource="{Binding Blocks}" />
+      </Border>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type rendering:MarkdownTable}">
+      <rendering:MarkdownTablePresenter Rows="{Binding Rows}" HasHeader="{Binding HasHeader}" Margin="0,4" />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type rendering:MarkdownThematicBreak}">
+      <Border Height="1" Background="{DynamicResource BorderSubtleBrush}" Margin="0,8" />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type rendering:MarkdownHtml}">
+      <SelectableTextBlock Text="{Binding Text}" Classes="muted" TextWrapping="Wrap" />
+    </DataTemplate>
+  </UserControl.DataTemplates>
+
+  <!-- 两列：Sidebar / 内容区（无顶栏行）。 -->
+  <Grid x:Name="LayoutRoot" ColumnDefinitions="Auto,*">
+    <Border x:Name="ContentFrame" Grid.Column="1" Classes="content-frame">
+      <Panel>
+        <local:WelcomeView x:Name="Welcome" IsVisible="{Binding ShowEmptyState}" />
+        <local:ConversationView x:Name="Conversation" IsVisible="{Binding !ShowEmptyState}" />
+      </Panel>
+    </Border>
+
+    <!-- 遮罩必须先于侧栏声明，保证抽屉在遮罩之上。宽度/显隐由 code-behind 直接设置。 -->
+    <Border x:Name="Scrim"
+            Classes="scrim"
+            Grid.ColumnSpan="2"
+            Background="{DynamicResource ScrimColorBrush}"
+            PointerPressed="OnScrimPointerPressed" />
+
+    <Border x:Name="SidebarHost"
+            Classes="sidebar-host"
+            Grid.Column="0"
+            Background="{DynamicResource SidebarBgBrush}"
+            ClipToBounds="True">
+      <local:SidebarView x:Name="Sidebar" />
+    </Border>
+  </Grid>
+</UserControl>

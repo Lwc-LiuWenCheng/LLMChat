@@ -1,0 +1,299 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "https://excalidraw.com",
+  "elements": [
+    {
+      "id": "t_title", "type": "text", "x": 40, "y": 25, "width": 1520, "height": 42,
+      "angle": 0, "strokeColor": "#1e1e1e", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 1001, "version": 1,
+      "versionNonce": 1001, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "DeepSeek 风格聊天界面 — 界面分区与控件拆分（Avalonia 12 + SukiUI 7）",
+      "fontSize": 28, "fontFamily": 5, "textAlign": "center", "verticalAlign": "middle",
+      "baseline": 33, "containerId": null, "originalText": "DeepSeek 风格聊天界面 — 界面分区与控件拆分（Avalonia 12 + SukiUI 7）", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "win", "type": "rectangle", "x": 60, "y": 90, "width": 1000, "height": 650,
+      "angle": 0, "strokeColor": "#343a40", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 3, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": { "type": 3 }, "seed": 1002, "version": 1,
+      "versionNonce": 1002, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false
+    },
+    {
+      "id": "topbar", "type": "rectangle", "x": 70, "y": 100, "width": 980, "height": 52,
+      "angle": 0, "strokeColor": "#1e1e1e", "backgroundColor": "#a5d8ff", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": { "type": 3 }, "seed": 1003, "version": 1,
+      "versionNonce": 1003, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false
+    },
+    {
+      "id": "topbar_t", "type": "text", "x": 82, "y": 108, "width": 956, "height": 36,
+      "angle": 0, "strokeColor": "#1e1e1e", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 1004, "version": 1,
+      "versionNonce": 1004, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "① TopBar 顶栏：☰ 汉堡 ｜ 会话标题 / 模型名 ｜ 新建对话 ✚ ｜ 主题切换 ⚙ ｜ 窗口按钮",
+      "fontSize": 16, "fontFamily": 5, "textAlign": "center", "verticalAlign": "middle",
+      "baseline": 20, "containerId": null, "originalText": "① TopBar 顶栏：☰ 汉堡 ｜ 会话标题 / 模型名 ｜ 新建对话 ✚ ｜ 主题切换 ⚙ ｜ 窗口按钮", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "sidebar", "type": "rectangle", "x": 70, "y": 162, "width": 250, "height": 568,
+      "angle": 0, "strokeColor": "#1e1e1e", "backgroundColor": "#b2f2bb", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": { "type": 3 }, "seed": 1005, "version": 1,
+      "versionNonce": 1005, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false
+    },
+    {
+      "id": "sidebar_t", "type": "text", "x": 80, "y": 172, "width": 230, "height": 548,
+      "angle": 0, "strokeColor": "#1e1e1e", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 1006, "version": 1,
+      "versionNonce": 1006, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "② Sidebar 侧边栏（会话导航）\n\n🔍 搜索会话（SearchText）\n＋ 开启新对话（NewSessionCommand）\n\n—— 今天 ——\n  · 会话1\n  · 会话2\n—— 昨天 ——\n  · 会话3\n—— 过去7天 ——\n—— 更早 ——\n\n👤 用户 / 设置入口",
+      "fontSize": 15, "fontFamily": 5, "textAlign": "left", "verticalAlign": "top",
+      "baseline": 19, "containerId": null, "originalText": "② Sidebar 侧边栏（会话导航）\n\n🔍 搜索会话（SearchText）\n＋ 开启新对话（NewSessionCommand）\n\n—— 今天 ——\n  · 会话1\n  · 会话2\n—— 昨天 ——\n  · 会话3\n—— 过去7天 ——\n—— 更早 ——\n\n👤 用户 / 设置入口", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "content", "type": "rectangle", "x": 330, "y": 162, "width": 720, "height": 568,
+      "angle": 0, "strokeColor": "#868e96", "backgroundColor": "#f1f3f5", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": { "type": 3 }, "seed": 1007, "version": 1,
+      "versionNonce": 1007, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false
+    },
+    {
+      "id": "content_t", "type": "text", "x": 340, "y": 170, "width": 700, "height": 30,
+      "angle": 0, "strokeColor": "#495057", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 1008, "version": 1,
+      "versionNonce": 1008, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "④ ContentArea 主内容区 〔ShowEmptyState 切换 Welcome ⇄ Conversation〕",
+      "fontSize": 15, "fontFamily": 5, "textAlign": "left", "verticalAlign": "middle",
+      "baseline": 19, "containerId": null, "originalText": "④ ContentArea 主内容区 〔ShowEmptyState 切换 Welcome ⇄ Conversation〕", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "welcome", "type": "rectangle", "x": 345, "y": 208, "width": 340, "height": 330,
+      "angle": 0, "strokeColor": "#1e1e1e", "backgroundColor": "#fff3bf", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": { "type": 3 }, "seed": 1009, "version": 1,
+      "versionNonce": 1009, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false
+    },
+    {
+      "id": "welcome_t", "type": "text", "x": 355, "y": 216, "width": 320, "height": 314,
+      "angle": 0, "strokeColor": "#1e1e1e", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 1010, "version": 1,
+      "versionNonce": 1010, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "⑤ Welcome 欢迎页\n（空状态 ShowEmptyState=true）\n\n   [ 居中 Logo ]\n\n   下午好，\n我能帮什么忙吗？\n\n[ ③ ComposerView 居中 ]\n（建议问题区 · 可选）",
+      "fontSize": 15, "fontFamily": 5, "textAlign": "center", "verticalAlign": "top",
+      "baseline": 19, "containerId": null, "originalText": "⑤ Welcome 欢迎页\n（空状态 ShowEmptyState=true）\n\n   [ 居中 Logo ]\n\n   下午好，\n我能帮什么忙吗？\n\n[ ③ ComposerView 居中 ]\n（建议问题区 · 可选）", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "conversation", "type": "rectangle", "x": 700, "y": 208, "width": 340, "height": 330,
+      "angle": 0, "strokeColor": "#1e1e1e", "backgroundColor": "#a5d8ff", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": { "type": 3 }, "seed": 1011, "version": 1,
+      "versionNonce": 1011, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false
+    },
+    {
+      "id": "conversation_t", "type": "text", "x": 710, "y": 216, "width": 320, "height": 314,
+      "angle": 0, "strokeColor": "#1e1e1e", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 1012, "version": 1,
+      "versionNonce": 1012, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "⑥ Conversation 对话区\n（有会话 ShowEmptyState=false）\n\n[ 消息列表 ScrollViewer ]\n  ┌ 用户气泡 ┐\n  ┌ 助手气泡·Markdown ┐\n  ┌ 操作栏 复制/重生成/赞踩 ┐\n    MessageItemView × N\n\n[ ③ ComposerView 贴底 ]",
+      "fontSize": 15, "fontFamily": 5, "textAlign": "center", "verticalAlign": "top",
+      "baseline": 19, "containerId": null, "originalText": "⑥ Conversation 对话区\n（有会话 ShowEmptyState=false）\n\n[ 消息列表 ScrollViewer ]\n  ┌ 用户气泡 ┐\n  ┌ 助手气泡·Markdown ┐\n  ┌ 操作栏 复制/重生成/赞踩 ┐\n    MessageItemView × N\n\n[ ③ ComposerView 贴底 ]", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "composer", "type": "rectangle", "x": 345, "y": 550, "width": 695, "height": 170,
+      "angle": 0, "strokeColor": "#c92a2a", "backgroundColor": "#ffc9c9", "fillStyle": "solid",
+      "strokeWidth": 3, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": { "type": 3 }, "seed": 1013, "version": 1,
+      "versionNonce": 1013, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false
+    },
+    {
+      "id": "composer_t", "type": "text", "x": 357, "y": 558, "width": 671, "height": 154,
+      "angle": 0, "strokeColor": "#1e1e1e", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 1014, "version": 1,
+      "versionNonce": 1014, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "③ ComposerView ★ 复用控件 ★（同一 VM，状态天然同步）\n多行 TextBox（Composer）\n[ 深度思考 IsDeepThinkEnabled ]  [ 智能搜索 IsWebSearchEnabled ]  [ 📎 附件 ]  [ 发送 / 停止 ShowSend/ShowStop → SendCommand/StopCommand ]\n出现位置：⑤ Welcome（居中） ｜ ⑥ Conversation（贴底）",
+      "fontSize": 14, "fontFamily": 5, "textAlign": "center", "verticalAlign": "middle",
+      "baseline": 18, "containerId": null, "originalText": "③ ComposerView ★ 复用控件 ★（同一 VM，状态天然同步）\n多行 TextBox（Composer）\n[ 深度思考 IsDeepThinkEnabled ]  [ 智能搜索 IsWebSearchEnabled ]  [ 📎 附件 ]  [ 发送 / 停止 ShowSend/ShowStop → SendCommand/StopCommand ]\n出现位置：⑤ Welcome（居中） ｜ ⑥ Conversation（贴底）", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "winlabel", "type": "text", "x": 60, "y": 744, "width": 1000, "height": 26,
+      "angle": 0, "strokeColor": "#495057", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 1015, "version": 1,
+      "versionNonce": 1015, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "应用窗口线框示意（约 1280 × 800）：① 顶栏 + ② 侧栏 + ④ 内容区；内容区内 ⑤⑥ 状态切换，内嵌 ③ 复用 Composer",
+      "fontSize": 14, "fontFamily": 5, "textAlign": "left", "verticalAlign": "middle",
+      "baseline": 18, "containerId": null, "originalText": "应用窗口线框示意（约 1280 × 800）：① 顶栏 + ② 侧栏 + ④ 内容区；内容区内 ⑤⑥ 状态切换，内嵌 ③ 复用 Composer", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "tbl_title", "type": "text", "x": 1090, "y": 90, "width": 490, "height": 35,
+      "angle": 0, "strokeColor": "#1e1e1e", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 1016, "version": 1,
+      "versionNonce": 1016, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "7 个 UserControl 控件清单（职责）",
+      "fontSize": 20, "fontFamily": 5, "textAlign": "left", "verticalAlign": "middle",
+      "baseline": 24, "containerId": null, "originalText": "7 个 UserControl 控件清单（职责）", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "row1", "type": "rectangle", "x": 1090, "y": 135, "width": 490, "height": 68,
+      "angle": 0, "strokeColor": "#adb5bd", "backgroundColor": "#e7f5ff", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": { "type": 3 }, "seed": 1017, "version": 1,
+      "versionNonce": 1017, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false
+    },
+    {
+      "id": "row1_t", "type": "text", "x": 1102, "y": 140, "width": 466, "height": 58,
+      "angle": 0, "strokeColor": "#1e1e1e", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 1018, "version": 1,
+      "versionNonce": 1018, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "ChatShellView — 顶层 Grid 编排，持有侧边栏展开状态，按断点切换视觉，居中约束内容宽度（替代 HomePage）",
+      "fontSize": 13, "fontFamily": 5, "textAlign": "left", "verticalAlign": "middle",
+      "baseline": 17, "containerId": null, "originalText": "ChatShellView — 顶层 Grid 编排，持有侧边栏展开状态，按断点切换视觉，居中约束内容宽度（替代 HomePage）", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "row2", "type": "rectangle", "x": 1090, "y": 211, "width": 490, "height": 68,
+      "angle": 0, "strokeColor": "#adb5bd", "backgroundColor": "#ffffff", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": { "type": 3 }, "seed": 1019, "version": 1,
+      "versionNonce": 1019, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false
+    },
+    {
+      "id": "row2_t", "type": "text", "x": 1102, "y": 216, "width": 466, "height": 58,
+      "angle": 0, "strokeColor": "#1e1e1e", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 1020, "version": 1,
+      "versionNonce": 1020, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "TopBarView — 汉堡 / 标题·模型名 / 新建对话 / 主题 / 窗口控制按钮",
+      "fontSize": 13, "fontFamily": 5, "textAlign": "left", "verticalAlign": "middle",
+      "baseline": 17, "containerId": null, "originalText": "TopBarView — 汉堡 / 标题·模型名 / 新建对话 / 主题 / 窗口控制按钮", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "row3", "type": "rectangle", "x": 1090, "y": 287, "width": 490, "height": 68,
+      "angle": 0, "strokeColor": "#adb5bd", "backgroundColor": "#e7f5ff", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": { "type": 3 }, "seed": 1021, "version": 1,
+      "versionNonce": 1021, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false
+    },
+    {
+      "id": "row3_t", "type": "text", "x": 1102, "y": 292, "width": 466, "height": 58,
+      "angle": 0, "strokeColor": "#1e1e1e", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 1022, "version": 1,
+      "versionNonce": 1022, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "SidebarView — 搜索框、新建对话、按日期分组会话列表、底部设置入口",
+      "fontSize": 13, "fontFamily": 5, "textAlign": "left", "verticalAlign": "middle",
+      "baseline": 17, "containerId": null, "originalText": "SidebarView — 搜索框、新建对话、按日期分组会话列表、底部设置入口", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "row4", "type": "rectangle", "x": 1090, "y": 363, "width": 490, "height": 68,
+      "angle": 0, "strokeColor": "#adb5bd", "backgroundColor": "#ffffff", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": { "type": 3 }, "seed": 1023, "version": 1,
+      "versionNonce": 1023, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false
+    },
+    {
+      "id": "row4_t", "type": "text", "x": 1102, "y": 368, "width": 466, "height": 58,
+      "angle": 0, "strokeColor": "#1e1e1e", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 1024, "version": 1,
+      "versionNonce": 1024, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "WelcomeView — 居中 Logo、问候语，居中内嵌 ComposerView（空状态首屏）",
+      "fontSize": 13, "fontFamily": 5, "textAlign": "left", "verticalAlign": "middle",
+      "baseline": 17, "containerId": null, "originalText": "WelcomeView — 居中 Logo、问候语，居中内嵌 ComposerView（空状态首屏）", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "row5", "type": "rectangle", "x": 1090, "y": 439, "width": 490, "height": 68,
+      "angle": 0, "strokeColor": "#adb5bd", "backgroundColor": "#e7f5ff", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": { "type": 3 }, "seed": 1025, "version": 1,
+      "versionNonce": 1025, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false
+    },
+    {
+      "id": "row5_t", "type": "text", "x": 1102, "y": 444, "width": 466, "height": 58,
+      "angle": 0, "strokeColor": "#1e1e1e", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 1026, "version": 1,
+      "versionNonce": 1026, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "ConversationView — 消息列表滚动容器、自动滚底、贴底内嵌 ComposerView",
+      "fontSize": 13, "fontFamily": 5, "textAlign": "left", "verticalAlign": "middle",
+      "baseline": 17, "containerId": null, "originalText": "ConversationView — 消息列表滚动容器、自动滚底、贴底内嵌 ComposerView", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "row6", "type": "rectangle", "x": 1090, "y": 515, "width": 490, "height": 68,
+      "angle": 0, "strokeColor": "#c92a2a", "backgroundColor": "#ffc9c9", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": { "type": 3 }, "seed": 1027, "version": 1,
+      "versionNonce": 1027, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false
+    },
+    {
+      "id": "row6_t", "type": "text", "x": 1102, "y": 520, "width": 466, "height": 58,
+      "angle": 0, "strokeColor": "#1e1e1e", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 1028, "version": 1,
+      "versionNonce": 1028, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "ComposerView — （复用）输入框、深度思考/智能搜索两开关、附件、发送/停止",
+      "fontSize": 13, "fontFamily": 5, "textAlign": "left", "verticalAlign": "middle",
+      "baseline": 17, "containerId": null, "originalText": "ComposerView — （复用）输入框、深度思考/智能搜索两开关、附件、发送/停止", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "row7", "type": "rectangle", "x": 1090, "y": 591, "width": 490, "height": 68,
+      "angle": 0, "strokeColor": "#adb5bd", "backgroundColor": "#ffffff", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": { "type": 3 }, "seed": 1029, "version": 1,
+      "versionNonce": 1029, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false
+    },
+    {
+      "id": "row7_t", "type": "text", "x": 1102, "y": 596, "width": 466, "height": 58,
+      "angle": 0, "strokeColor": "#1e1e1e", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 1030, "version": 1,
+      "versionNonce": 1030, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "MessageItemView — 单条消息气泡（数据模板）：用户/助手区分、Markdown 渲染、操作栏",
+      "fontSize": 13, "fontFamily": 5, "textAlign": "left", "verticalAlign": "middle",
+      "baseline": 17, "containerId": null, "originalText": "MessageItemView — 单条消息气泡（数据模板）：用户/助手区分、Markdown 渲染、操作栏", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "rel", "type": "rectangle", "x": 60, "y": 790, "width": 1520, "height": 180,
+      "angle": 0, "strokeColor": "#1e1e1e", "backgroundColor": "#e7f5ff", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": { "type": 3 }, "seed": 1031, "version": 1,
+      "versionNonce": 1031, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false
+    },
+    {
+      "id": "rel_t", "type": "text", "x": 80, "y": 802, "width": 1480, "height": 156,
+      "angle": 0, "strokeColor": "#1e1e1e", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 1032, "version": 1,
+      "versionNonce": 1032, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "嵌套 / 复用关系（箭头表达）\nChatShellView（根外壳） ──包含──▶ TopBarView ｜ SidebarView ｜ ContentArea\nContentArea ──ShowEmptyState 切换──▶ WelcomeView ⇄ ConversationView\nWelcomeView / ConversationView ──各自内嵌 · 同一 VM · 状态同步──▶ ③ ComposerView（复用控件）\nConversationView ──ItemsControl 列表──▶ MessageItemView × N",
+      "fontSize": 16, "fontFamily": 5, "textAlign": "left", "verticalAlign": "top",
+      "baseline": 20, "containerId": null, "originalText": "嵌套 / 复用关系（箭头表达）\nChatShellView（根外壳） ──包含──▶ TopBarView ｜ SidebarView ｜ ContentArea\nContentArea ──ShowEmptyState 切换──▶ WelcomeView ⇄ ConversationView\nWelcomeView / ConversationView ──各自内嵌 · 同一 VM · 状态同步──▶ ③ ComposerView（复用控件）\nConversationView ──ItemsControl 列表──▶ MessageItemView × N", "autoResize": true, "lineHeight": 1.25
+    }
+  ],
+  "appState": { "viewBackgroundColor": "#ffffff", "gridSize": 20 },
+  "files": {}
+}
