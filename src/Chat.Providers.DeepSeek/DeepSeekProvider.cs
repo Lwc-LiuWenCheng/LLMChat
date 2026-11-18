@@ -23,7 +23,7 @@ public sealed class DeepSeekProvider : IChatProvider
         DisplayName: "DeepSeek",
         Family: ProtocolFamily.AnthropicMessages,
         Version: "1.0.0",
-        Capabilities: ProviderCapabilities.Thinking | ProviderCapabilities.Usage | ProviderCapabilities.PromptCache,
+        Capabilities: ProviderCapabilities.Thinking | ProviderCapabilities.Usage | ProviderCapabilities.PromptCache | ProviderCapabilities.ImageInput,
         DefaultModel: "deepseek-flash",
         Description: "DeepSeek 官方 API（Anthropic Messages 兼容）。");
 
@@ -206,6 +206,21 @@ public sealed class DeepSeekProvider : IChatProvider
                 {
                     case ChatPart.Text text:
                         content.Add(new JsonObject { ["type"] = "text", ["text"] = text.Value });
+                        break;
+                    case ChatPart.Image image when image.Data is { Length: > 0 }:
+                        content.Add(new JsonObject
+                        {
+                            ["type"] = "image",
+                            ["source"] = new JsonObject
+                            {
+                                ["type"] = "base64",
+                                ["media_type"] = string.IsNullOrWhiteSpace(image.MediaType) ? "image/png" : image.MediaType,
+                                ["data"] = Convert.ToBase64String(image.Data),
+                            },
+                        });
+                        break;
+                    case ChatPart.FileRef:
+                        // 宿主当前不传附件引用；忽略以保持请求体合法（不抛异常）。
                         break;
                     case ChatPart.ToolCall call:
                         content.Add(new JsonObject

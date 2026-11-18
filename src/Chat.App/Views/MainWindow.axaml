@@ -121,12 +121,26 @@
                   IsExpanded="{Binding IsSettingsOpen}"
                   Margin="0,10,0,0">
           <StackPanel Spacing="6">
-            <TextBlock Text="DeepSeek API Key" Classes="muted" />
+            <TextBlock Text="DeepSeek 数据源向导" FontWeight="SemiBold" />
+            <TextBlock Text="打开 DeepSeek 控制台创建并复制 API Key，粘贴后点「验证并保存」。DeepSeek 官方不支持自动抓取 Key。"
+                       Classes="muted" TextWrapping="Wrap" />
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <Button Content="创建 / 复制 Key" Command="{Binding OpenApiKeysPageCommand}" />
+              <Button Content="去充值" Command="{Binding OpenTopUpPageCommand}" />
+            </StackPanel>
+            <TextBlock Text="或手动填写 API Key" Classes="muted" />
             <TextBox Text="{Binding ApiKeyInput}" PasswordChar="•" PlaceholderText="sk-..." />
-            <Button Content="保存" Command="{Binding SaveSettingsCommand}" Classes="accent" />
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <Button Content="验证并保存" Command="{Binding VerifyAndSaveAccountCommand}"
+                      Classes="accent" IsEnabled="{Binding CanVerifyAccount}" />
+              <Button Content="仅保存" Command="{Binding SaveSettingsCommand}" />
+            </StackPanel>
+            <TextBlock x:Name="AccountStatusText" Text="{Binding WizardStatusText}"
+                       Classes="muted" TextWrapping="Wrap" />
+            <TextBlock x:Name="BalanceText" Text="{Binding BalanceText}"
+                       IsVisible="{Binding IsAccountAvailable}" TextWrapping="Wrap" />
             <TextBlock Text="Key 保存在本地设置库；环境变量 DEEPSEEK_APIKEY 作为兜底。"
-                       Classes="muted"
-                       TextWrapping="Wrap" />
+                       Classes="muted" TextWrapping="Wrap" />
           </StackPanel>
         </Expander>
 

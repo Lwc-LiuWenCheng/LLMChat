@@ -32,6 +32,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
     [ObservableProperty] private string _statusText = "";
     [ObservableProperty] private string _errorText = "";
     [ObservableProperty] private string _apiKeyInput = "";
+    partial void OnApiKeyInputChanged(string value) => OnPropertyChanged(nameof(CanVerifyAccount));
     [ObservableProperty] private bool _isSettingsOpen;
     [ObservableProperty] private string _branchText = "";
     [ObservableProperty] private bool _canNavigateBranch;
@@ -45,12 +46,17 @@ public sealed partial class MainWindowViewModel : ObservableObject
     [ObservableProperty] private string _archiveConfirmationText = "";
     [ObservableProperty] private string _archiveStatusText = "";
     [ObservableProperty] private string _archiveSummaryText = "";
+    [ObservableProperty] private string _wizardStatusText = "";
+    [ObservableProperty] private bool _isAccountBusy;
+    [ObservableProperty] private bool _isAccountAvailable;
+    [ObservableProperty] private string _balanceText = "";
 
     public MainWindowViewModel(AppServices services, IEnumerable<IChatProvider>? providers = null,
-        IClipboardService? clipboard = null)
+        IClipboardService? clipboard = null, IDeepSeekAccountService? accountService = null)
     {
         _services = services;
         Clipboard = clipboard;
+        AccountService = accountService ?? services.DeepSeekAccount;
         Sessions = new ObservableCollection<Session>();
         Messages = new ObservableCollection<MessageViewModel>();
         Providers = new ObservableCollection<ProviderDescriptor>();
@@ -70,7 +76,11 @@ public sealed partial class MainWindowViewModel : ObservableObject
         if (Sessions.Count > 0) SelectedSession = Sessions[0];
     }
 
-    private const string SecretKey = "deepseek.apiKey";
+    /// <summary>凭据设置名与账户向导服务共用同一常量，绝不重复定义。</summary>
+    public const string SecretKey = DeepSeekAccountService.SecretKey;
+
+    /// <summary>账户向导服务；生产由 AppServices 提供，headless 测试可替换。</summary>
+    public IDeepSeekAccountService AccountService { get; }
 
     public ObservableCollection<Session> Sessions { get; }
 
@@ -750,6 +760,59 @@ public sealed partial class MainWindowViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private void OpenApiKeysPage() => AccountService.OpenApiKeysPage();
+
+    [RelayCommand]
+    private void OpenTopUpPage() => AccountService.OpenTopUpPage();
+
+    [RelayCommand]
+    private async Task VerifyAndSaveAccountAsync()
+    {
+        if (IsAccountBusy) return;
+        var key = ApiKeyInput.Trim();
+        IsAccountBusy = true;
+        WizardStatusText = "正在验证 API Key 与余额…";
+        OnPropertyChanged(nameof(CanVerifyAccount));
+        try
+        {
+            var result = await AccountService.VerifyAndSaveAsync(key).ConfigureAwait(true);
+            WizardStatusText = result.Message;
+            if (result.Saved)
+            {
+                ApiKeyInput = key;
+                IsAccountAvailable = result.Status == DeepSeekAccountStatus.Verified;
+                BalanceText = IsAccountAvailable
+                    ? string.Join(Environment.NewLine,
+                        result.Balances.Select(b => $"{b.Currency}｜总额 {b.TotalBalance}｜赠金 {b.GrantedBalance}｜充值 {b.ToppedUpBalance}"))
+                    : "";
+                StatusText = IsAccountAvailable ? "DeepSeek 账户已验证" : "DeepSeek 账户余额不可用";
+                if (IsAccountAvailable) _ = LoadModelsAsync();
+            }
+            else
+            {
+                IsAccountAvailable = false;
+                BalanceText = "";
+                ErrorText = result.Message;
+            }
+        }
+        catch (Exception)
+        {
+            // 兜底：UI 绝不显示完整 key，也不让向导把主窗口带崩。
+            WizardStatusText = "验证失败，请稍后重试。";
+            IsAccountAvailable = false;
+            BalanceText = "";
+            ErrorText = WizardStatusText;
+        }
+        finally
+        {
+            IsAccountBusy = false;
+            OnPropertyChanged(nameof(CanVerifyAccount));
+        }
+    }
+
+    public bool CanVerifyAccount => !IsAccountBusy && !string.IsNullOrWhiteSpace(ApiKeyInput);
+
+    [RelayCommand]
     private void PrevBranch() => MoveBranch(-1);
 
     [RelayCommand]
@@ -809,6 +872,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
         var request = PromptAssembler.Build(
             session,
             path,
+            attachmentReader: _services.CreateAttachmentReader(),
             modelOverride: string.IsNullOrWhiteSpace(Model) ? null : Model,
             extra: provider.Descriptor.Capabilities.HasFlag(ProviderCapabilities.Thinking)
                 ? new Dictionary<string, string> { ["thinking"] = "enabled" }

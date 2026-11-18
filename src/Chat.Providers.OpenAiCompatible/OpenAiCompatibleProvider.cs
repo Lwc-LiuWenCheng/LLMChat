@@ -55,7 +55,7 @@ public sealed class OpenAiCompatibleProvider : IChatProvider
         DisplayName: "OpenAI 兼容（GLM / MiniMax）",
         Family: ProtocolFamily.OpenAiCompatible,
         Version: "1.0.0",
-        Capabilities: ProviderCapabilities.Thinking | ProviderCapabilities.ToolCall | ProviderCapabilities.Usage | ProviderCapabilities.PromptCache,
+        Capabilities: ProviderCapabilities.Thinking | ProviderCapabilities.ToolCall | ProviderCapabilities.Usage | ProviderCapabilities.PromptCache | ProviderCapabilities.ImageInput,
         DefaultModel: "glm-4.6",
         Description: "任意 OpenAI Chat Completions 兼容端点（内置 GLM / MiniMax 预设）。");
 
@@ -400,6 +400,10 @@ public sealed class OpenAiCompatibleProvider : IChatProvider
     private static void AppendMessage(JsonArray messages, ChatMessage message)
     {
         var text = new StringBuilder();
+        // 图片存在时才启用数组 content：text-only 请求保持原有单个 string content（零回归）。
+        var pendingText = new StringBuilder();
+        var blocks = new List<JsonNode>();
+        var hasImage = false;
         List<ChatPart.ToolCall>? calls = null;
         List<ChatPart.ToolResult>? results = null;
 
@@ -409,6 +413,28 @@ public sealed class OpenAiCompatibleProvider : IChatProvider
             {
                 case ChatPart.Text value when value.Value.Length > 0:
                     text.Append(value.Value);
+                    pendingText.Append(value.Value);
+                    break;
+                case ChatPart.Image image when image.Data is { Length: > 0 }:
+                    hasImage = true;
+                    if (pendingText.Length > 0)
+                    {
+                        blocks.Add(new JsonObject { ["type"] = "text", ["text"] = pendingText.ToString() });
+                        pendingText.Clear();
+                    }
+
+                    var mime = string.IsNullOrWhiteSpace(image.MediaType) ? "image/png" : image.MediaType;
+                    blocks.Add(new JsonObject
+                    {
+                        ["type"] = "image_url",
+                        ["image_url"] = new JsonObject
+                        {
+                            ["url"] = $"data:{mime};base64,{Convert.ToBase64String(image.Data)}",
+                        },
+                    });
+                    break;
+                case ChatPart.FileRef:
+                    // 宿主当前不传附件引用；忽略以保持请求体合法（不抛异常）。
                     break;
                 case ChatPart.ToolCall call:
                     (calls ??= []).Add(call);
@@ -418,6 +444,9 @@ public sealed class OpenAiCompatibleProvider : IChatProvider
                     break;
             }
         }
+
+        if (hasImage && pendingText.Length > 0)
+            blocks.Add(new JsonObject { ["type"] = "text", ["text"] = pendingText.ToString() });
 
         var role = message.Role switch
         {
@@ -444,7 +473,13 @@ public sealed class OpenAiCompatibleProvider : IChatProvider
         else
         {
             AppendToolResults(messages, results);
-            if (text.Length > 0)
+            if (hasImage)
+            {
+                var content = new JsonArray();
+                foreach (var block in blocks) content.Add(block);
+                messages.Add(new JsonObject { ["role"] = role, ["content"] = content });
+            }
+            else if (text.Length > 0)
                 messages.Add(new JsonObject { ["role"] = role, ["content"] = text.ToString() });
         }
     }

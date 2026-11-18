@@ -23,6 +23,9 @@ internal sealed class FakeChatProvider : IChatProvider
 
     public List<ChatRequest> Requests { get; } = [];
 
+    /// <summary>测试钩子：每次请求到达时调用，便于断言最终送给 provider 的完整请求。</summary>
+    public Action<ChatRequest>? OnStream { get; set; }
+
     public FakeChatProvider Text(string text)
     {
         _scripts.Enqueue(_ => Emit(new ChatEvent.TextDelta(text), new ChatEvent.Done(StopReason.EndTurn)));
@@ -75,6 +78,7 @@ internal sealed class FakeChatProvider : IChatProvider
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         Requests.Add(request);
+        OnStream?.Invoke(request);
         var script = _scripts.Count > 0
             ? _scripts.Dequeue()
             : _ => Emit(new ChatEvent.Done(StopReason.EndTurn));

@@ -26,7 +26,9 @@ public class MainWindowHeadlessTests
     internal static async Task RunWindowAsync(
         Func<AppServices, MainWindowViewModel, MainWindow, Task> body,
         IEnumerable<IChatProvider>? providers = null,
-        IClipboardService? clipboard = null)
+        IClipboardService? clipboard = null,
+        IUrlLauncher? urlLauncher = null,
+        HttpMessageInvoker? http = null)
     {
         // 环境变量是 ProviderContext.GetSecretAsync 的兜底：宿主如果设了 DEEPSEEK_APIKEY，
         // "未配置 Key" 用例会真的去连网。测试期间强制清空，结束后恢复。
@@ -37,7 +39,7 @@ public class MainWindowHeadlessTests
             await HeadlessSession.RunAsync(async () =>
             {
                 using var temp = new TempDataDirectory();
-                using var services = AppServices.Create(temp.Path);
+                using var services = AppServices.Create(temp.Path, urlLauncher, http);
                 var vm = new MainWindowViewModel(services, providers, clipboard);
                 var window = new MainWindow { DataContext = vm };
                 try

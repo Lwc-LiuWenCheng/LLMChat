@@ -1,5 +1,6 @@
 using System.Net.Http.Headers;
 using Chat.Abstractions;
+using Chat.Core;
 using Chat.Kernel;
 using Chat.Storage;
 
@@ -11,9 +12,12 @@ namespace Chat.App.Services;
 public sealed class AppServices : IDisposable
 {
     private readonly HttpClient _http;
+    private readonly FileStore _files;
+    private readonly IUrlLauncher _urlLauncher;
 
     private AppServices(string dataDirectory, ChatDatabase database, ProviderHost host,
-        IReadOnlyList<LoadedPlugin> plugins, IReadOnlyList<PluginLoadFailure> failures)
+        IReadOnlyList<LoadedPlugin> plugins, IReadOnlyList<PluginLoadFailure> failures,
+        IUrlLauncher? urlLauncher = null, HttpMessageInvoker? http = null)
     {
         DataDirectory = dataDirectory;
         Database = database;
@@ -25,11 +29,14 @@ public sealed class AppServices : IDisposable
         Plugins = plugins;
         Failures = failures;
 
-        _http = new HttpClient(new HttpClientHandler())
+        _http = http as HttpClient ?? new HttpClient(new HttpClientHandler())
         {
             Timeout = TimeSpan.FromMinutes(10),
         };
-        _http.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(AppInfo.Name, AppInfo.Version));
+        if (!ReferenceEquals(_http, http))
+            _http.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(AppInfo.Name, AppInfo.Version));
+        _files = new FileStore(dataDirectory);
+        _urlLauncher = urlLauncher ?? new SystemUrlLauncher();
     }
 
     public string DataDirectory { get; }
@@ -52,7 +59,38 @@ public sealed class AppServices : IDisposable
 
     public HttpMessageInvoker Http => _http;
 
-    public static AppServices Create(string? dataDirectory = null)
+    /// <summary>
+    /// 为一次 provider 请求创建附件字节读取器：相对路径统一经 <see cref="FileStore.ResolvePath"/> 校验，
+    /// 同一请求内相同路径只读一次。读不到（文件缺失、越界、IO 错误）返回 null，由 PromptAssembler 降级。
+    /// </summary>
+    public AttachmentReader CreateAttachmentReader()
+    {
+        var cache = new Dictionary<string, byte[]?>(StringComparer.Ordinal);
+        return relativePath =>
+        {
+            if (cache.TryGetValue(relativePath, out var cached)) return cached;
+            byte[]? bytes;
+            try
+            {
+                var fullPath = _files.ResolvePath(relativePath);
+                bytes = File.Exists(fullPath) ? File.ReadAllBytes(fullPath) : null;
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidOperationException or ArgumentException)
+            {
+                bytes = null;
+            }
+            cache[relativePath] = bytes;
+            return bytes;
+        };
+    }
+
+    /// <summary>DeepSeek 账户向导（宿主层服务，URL 打开与 HTTP 都可注入假实现）。</summary>
+    public IDeepSeekAccountService DeepSeekAccount { get; private set; } = null!;
+
+    public static AppServices Create(
+        string? dataDirectory = null,
+        IUrlLauncher? urlLauncher = null,
+        HttpMessageInvoker? http = null)
     {
         var data = dataDirectory ?? StoragePaths.DefaultDataDirectory;
         Directory.CreateDirectory(data);
@@ -67,7 +105,9 @@ public sealed class AppServices : IDisposable
         var host = new ProviderHost(catalog);
         var result = host.LoadAll(AppInfo.Version);
 
-        return new AppServices(data, database, host, result.Loaded, result.Failures);
+        var services = new AppServices(data, database, host, result.Loaded, result.Failures, urlLauncher, http);
+        services.DeepSeekAccount = new DeepSeekAccountService(services._http, services.Settings, services._urlLauncher);
+        return services;
     }
 
     public IChatProvider? FindProvider(string? providerId)
