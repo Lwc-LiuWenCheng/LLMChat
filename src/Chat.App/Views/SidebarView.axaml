@@ -1,0 +1,163 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="using:Chat.App.Views"
+             xmlns:suki="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+             xmlns:vm="using:Chat.App.ViewModels"
+             xmlns:app="using:Chat.App"
+             mc:Ignorable="d"
+             d:DesignWidth="280"
+             d:DesignHeight="760"
+             d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel, IsDesignTimeCreatable=False}"
+             x:Class="Chat.App.Views.SidebarView">
+  <!-- 侧边栏：搜索 / 新建 / 分组会话 / 设置 -->
+  <Grid>
+    <!-- 完整侧栏：搜索 / 新对话 / 分组会话 / 账户设置 -->
+    <DockPanel x:Name="FullPanel">
+      <Border DockPanel.Dock="Top" Padding="14,12,14,6">
+        <StackPanel Spacing="12">
+          <!-- 顶部：品牌文字 + 胶囊工具栏（搜索、侧栏折叠），图标来自网页真实 SVG。 -->
+          <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+            <TextBlock Grid.Column="0" Text="{x:Static app:AppBranding.SidebarBrand}"
+                       Classes="title" FontSize="18" VerticalAlignment="Center" />
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="2">
+              <Button Classes="ghost" Width="30" Height="30" Click="OnSearchClicked"
+                      ToolTip.Tip="搜索会话">
+                <Viewbox Width="16" Height="16">
+                  <Path Data="{x:Static app:AppIcons.Search}" Stretch="Uniform"
+                        Fill="{Binding $parent[Button].Foreground}" />
+                </Viewbox>
+              </Button>
+              <Button Classes="ghost" Width="30" Height="30" Click="OnExpandRequested"
+                      ToolTip.Tip="收起侧边栏">
+                <Viewbox Width="16" Height="16">
+                  <Path Data="{x:Static app:AppIcons.SidebarToggle}" Stretch="Uniform"
+                        Fill="{Binding $parent[Button].Foreground}" />
+                </Viewbox>
+              </Button>
+            </StackPanel>
+          </Grid>
+          <!-- 展开式搜索框（点搜索图标显示）。 -->
+          <TextBox x:Name="SearchBox" Text="{Binding SearchText}"
+                   PlaceholderText="搜索会话" FontSize="12" IsVisible="False" />
+          <!-- 开启新对话：网页为文字按钮 + 圆形加号图标。 -->
+          <Button Command="{Binding NewSessionCommand}" Classes="ghost"
+                  HorizontalContentAlignment="Left" FontSize="14">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <Viewbox Width="16" Height="16">
+                <Path Data="{x:Static app:AppIcons.NewChat}" Stretch="Uniform"
+                      Fill="{Binding $parent[Button].Foreground}" />
+              </Viewbox>
+              <TextBlock Text="开启新对话" FontSize="14" />
+            </StackPanel>
+          </Button>
+        </StackPanel>
+      </Border>
+
+      <!-- 底部用户区：头像 + 用户名 + 设置三点（网页真实结构）；设置面板由三点按钮展开。 -->
+      <Border DockPanel.Dock="Bottom" Padding="10,8"
+              BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="0,1,0,0">
+        <StackPanel Spacing="6">
+          <Grid ColumnDefinitions="Auto,*,Auto" VerticalAlignment="Center">
+            <Border Grid.Column="0" Width="18" Height="18" CornerRadius="9"
+                    Background="{DynamicResource AccentColorBrush}" Margin="0,0,8,0">
+              <TextBlock Text="U" FontSize="10" Foreground="White"
+                         HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+            <TextBlock Grid.Column="1" Text="用户" FontSize="13" VerticalAlignment="Center" />
+            <Button Grid.Column="2" Classes="ghost" Width="30" Height="30"
+                    Click="OnSettingsClicked" ToolTip.Tip="设置">
+              <Viewbox Width="16" Height="16">
+                <Path Data="{x:Static app:AppIcons.More}" Stretch="Uniform"
+                      Fill="{Binding $parent[Button].Foreground}" />
+              </Viewbox>
+            </Button>
+          </Grid>
+          <StackPanel Spacing="6" IsVisible="{Binding IsSettingsOpen}">
+            <TextBlock Text="{x:Static app:AppBranding.ApiKeyLabel}" Classes="muted" />
+            <TextBox Text="{Binding ApiKeyInput}" PasswordChar="•" PlaceholderText="sk-..." FontSize="12" />
+            <Button Content="保存" Command="{Binding SaveSettingsCommand}" Classes="accent"
+                    FontSize="12" HorizontalAlignment="Stretch" />
+          </StackPanel>
+        </StackPanel>
+      </Border>
+
+      <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="6,4">
+        <ItemsControl ItemsSource="{Binding GroupedSessions}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <StackPanel Spacing="2" Margin="0,8,0,0">
+                <TextBlock Text="{Binding Title}"
+                           Classes="muted"
+                           FontWeight="SemiBold"
+                           Margin="8,0,0,2" />
+                <ItemsControl ItemsSource="{Binding Sessions}">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                      <Button HorizontalAlignment="Stretch"
+                              HorizontalContentAlignment="Stretch"
+                              Background="Transparent"
+                              Padding="8,6"
+                              CornerRadius="6"
+                              Click="OnSessionClicked">
+                        <Grid ColumnDefinitions="*,Auto">
+                          <TextBlock Grid.Column="0"
+                                     Text="{Binding DisplayTitle}"
+                                     TextTrimming="CharacterEllipsis"
+                                     FontSize="13" />
+                          <TextBlock Grid.Column="1"
+                                     Text="置顶"
+                                     Classes="muted"
+                                     IsVisible="{Binding Pinned}"
+                                     VerticalAlignment="Center"
+                                     Margin="6,0,0,0" />
+                        </Grid>
+                      </Button>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </StackPanel>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
+    </DockPanel>
+
+    <!-- 收起后的图标条：真实图标；点击任一按钮展开完整侧栏 -->
+    <StackPanel x:Name="CompactRail"
+                IsVisible="False"
+                Width="60"
+                Spacing="8"
+                Margin="0,8,0,0">
+      <Button Classes="ghost" Width="40" Height="40" HorizontalAlignment="Center"
+              Click="OnExpandRequested" ToolTip.Tip="展开侧边栏">
+        <Viewbox Width="18" Height="18">
+          <Path Data="{x:Static app:AppIcons.SidebarToggle}" Stretch="Uniform"
+                Fill="{Binding $parent[Button].Foreground}" />
+        </Viewbox>
+      </Button>
+      <Button Classes="ghost" Width="40" Height="40" HorizontalAlignment="Center"
+              Command="{Binding NewSessionCommand}" ToolTip.Tip="开启新对话">
+        <Viewbox Width="18" Height="18">
+          <Path Data="{x:Static app:AppIcons.NewChat}" Stretch="Uniform"
+                Fill="{Binding $parent[Button].Foreground}" />
+        </Viewbox>
+      </Button>
+      <Button Classes="ghost" Width="40" Height="40" HorizontalAlignment="Center"
+              Click="OnExpandRequested" ToolTip.Tip="搜索会话">
+        <Viewbox Width="18" Height="18">
+          <Path Data="{x:Static app:AppIcons.Search}" Stretch="Uniform"
+                Fill="{Binding $parent[Button].Foreground}" />
+        </Viewbox>
+      </Button>
+      <Button Classes="ghost" Width="40" Height="40" HorizontalAlignment="Center"
+              Click="OnExpandRequested" ToolTip.Tip="设置">
+        <Viewbox Width="18" Height="18">
+          <Path Data="{x:Static app:AppIcons.More}" Stretch="Uniform"
+                Fill="{Binding $parent[Button].Foreground}" />
+        </Viewbox>
+      </Button>
+    </StackPanel>
+  </Grid>
+</UserControl>

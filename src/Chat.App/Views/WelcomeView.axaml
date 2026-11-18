@@ -1,0 +1,54 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="using:Chat.App.Views"
+             xmlns:suki="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+             xmlns:app="using:Chat.App"
+             mc:Ignorable="d"
+             d:DesignWidth="860"
+             d:DesignHeight="600"
+             x:Class="Chat.App.Views.WelcomeView">
+  <UserControl.Styles>
+    <Style Selector="TextBlock.greeting">
+      <Setter Property="FontSize" Value="32" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style Selector="UserControl.narrow TextBlock.greeting">
+      <Setter Property="FontSize" Value="24" />
+    </Style>
+  </UserControl.Styles>
+
+  <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <!-- Stretch + MaxWidth：在 ScrollViewer 中按视口宽度撑到上限，避免 StackPanel 收缩成内容宽度（输入框只剩 400px）。 -->
+    <StackPanel VerticalAlignment="Center"
+                HorizontalAlignment="Stretch"
+                Spacing="14"
+                MaxWidth="720"
+                Margin="24,48">
+      <!-- 品牌标识：网页为鲸鱼 logo（SVG），此处用统一产品名文字保持自包含。 -->
+      <TextBlock Text="{x:Static app:AppBranding.ProductName}"
+                 FontSize="40" FontWeight="SemiBold"
+                 Foreground="{DynamicResource AccentColorBrush}"
+                 HorizontalAlignment="Center" />
+      <TextBlock Classes="greeting"
+                 Text="{x:Static app:AppBranding.Greeting}"
+                 HorizontalAlignment="Center"
+                 TextAlignment="Center"
+                 TextWrapping="Wrap" />
+      <TextBlock Classes="muted"
+                 Text="{x:Static app:AppBranding.GreetingSubtitle}"
+                 HorizontalAlignment="Center"
+                 TextAlignment="Center" />
+
+      <!-- Welcome 与 Conversation 复用同一个 ComposerView，绑定同一 VM -->
+      <local:ComposerView Margin="0,28,0,0" HorizontalAlignment="Stretch" />
+
+      <TextBlock Classes="muted"
+                 Text="{x:Static app:AppBranding.Disclaimer}"
+                 HorizontalAlignment="Center"
+                 TextAlignment="Center"
+                 Margin="0,16,0,0" />
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

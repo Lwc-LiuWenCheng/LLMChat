@@ -45,6 +45,29 @@ public sealed partial class MainWindowViewModel : ObservableObject
     [ObservableProperty] private string _archiveConfirmationText = "";
     [ObservableProperty] private string _archiveStatusText = "";
     [ObservableProperty] private string _archiveSummaryText = "";
+    [ObservableProperty] private bool _isDeepThinkEnabled;
+    [ObservableProperty] private bool _isWebSearchEnabled;
+
+    /// <summary>思考强度下拉项；"关闭"对应 <see cref="IsDeepThinkEnabled"/> = false。</summary>
+    public static readonly string[] ThinkingLevels = ["关闭", "低", "中", "高"];
+
+    [ObservableProperty] private string _thinkingLevel = "高";
+
+    partial void OnThinkingLevelChanged(string value)
+    {
+        IsDeepThinkEnabled = value is not ("关闭" or "");
+        OnPropertyChanged(nameof(ModeDisplay));
+    }
+
+    partial void OnIsDeepThinkEnabledChanged(bool value)
+    {
+        // 反向同步：外部把开关设为 false 时，下拉显示"关闭"。
+        if (!value && ThinkingLevel != "关闭") ThinkingLevel = "关闭";
+        else if (value && ThinkingLevel == "关闭") ThinkingLevel = "中";
+    }
+
+    /// <summary>输入区右下角简洁下拉的显示文本：「模型 · 强度」。</summary>
+    public string ModeDisplay => $"{SelectedProvider?.DisplayName ?? Model} · {ThinkingLevel}";
 
     public MainWindowViewModel(AppServices services, IEnumerable<IChatProvider>? providers = null,
         IClipboardService? clipboard = null)
@@ -79,6 +102,31 @@ public sealed partial class MainWindowViewModel : ObservableObject
     public ObservableCollection<ProviderDescriptor> Providers { get; }
 
     public ObservableCollection<string> Models { get; }
+
+    /// <summary>侧边栏按日期分组的会话条目，供 DeepSeek 风格界面使用。</summary>
+    public sealed record SessionGroup(string Title, IReadOnlyList<Session> Sessions);
+
+    public IReadOnlyList<SessionGroup> GroupedSessions => BuildGroupedSessions();
+
+    private IReadOnlyList<SessionGroup> BuildGroupedSessions()
+    {
+        var today = DateTime.Today;
+        var ordered = Sessions.OrderByDescending(s => s.UpdatedAt).ToList();
+        var groups = new List<SessionGroup>();
+
+        void Add(string title, Func<Session, bool> predicate)
+        {
+            var items = ordered.Where(predicate).ToList();
+            if (items.Count > 0) groups.Add(new SessionGroup(title, items));
+        }
+
+        Add("今天", s => s.UpdatedAt.LocalDateTime.Date == today);
+        Add("昨天", s => s.UpdatedAt.LocalDateTime.Date == today.AddDays(-1));
+        Add("7 天内", s => s.UpdatedAt.LocalDateTime.Date > today.AddDays(-7)
+                           && s.UpdatedAt.LocalDateTime.Date < today.AddDays(-1));
+        Add("更早", s => s.UpdatedAt.LocalDateTime.Date <= today.AddDays(-7));
+        return groups;
+    }
 
     /// <summary>窗口打开后注入真实剪贴板；测试可注入假实现。</summary>
     public IClipboardService? Clipboard { get; set; }
@@ -142,6 +190,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
     partial void OnSelectedProviderChanged(ProviderDescriptor? value)
     {
         if (value?.DefaultModel is { Length: > 0 } m) Model = m;
+        OnPropertyChanged(nameof(ModeDisplay));
         _ = LoadModelsAsync();
     }
 
@@ -252,6 +301,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
         OnPropertyChanged(nameof(ShowEmptyState));
         OnPropertyChanged(nameof(IsPinned));
+        OnPropertyChanged(nameof(GroupedSessions));
     }
 
     private IChatProvider? CurrentProvider()
@@ -280,6 +330,13 @@ public sealed partial class MainWindowViewModel : ObservableObject
         SelectedSession = session;
         _suppressReload = false;
         return session;
+    }
+
+    [RelayCommand]
+    private void SelectSession(Session? session)
+    {
+        if (session is null) return;
+        SelectedSession = session;
     }
 
     [RelayCommand]

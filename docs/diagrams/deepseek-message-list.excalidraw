@@ -1,0 +1,604 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "https://excalidraw.com",
+  "elements": [
+    {
+      "id": "t_title", "type": "text", "x": 40, "y": 28, "width": 1520, "height": 40,
+      "angle": 0, "strokeColor": "#1e1e1e", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2001, "version": 1,
+      "versionNonce": 2001, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "消息对话区（Message List）— 基于网页实测 DOM 的复刻设计",
+      "fontSize": 26, "fontFamily": 5, "textAlign": "center", "verticalAlign": "middle",
+      "baseline": 31, "containerId": null, "originalText": "消息对话区（Message List）— 基于网页实测 DOM 的复刻设计", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "t_subtitle", "type": "text", "x": 40, "y": 72, "width": 1520, "height": 24,
+      "angle": 0, "strokeColor": "#61666b", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2002, "version": 1,
+      "versionNonce": 2002, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "取证：VS Code 集成浏览器 + Playwright｜getComputedStyle / getBoundingClientRect 读真实值｜视口 1440×900（另测 1920×1080）｜全程只读，未发送任何消息",
+      "fontSize": 14, "fontFamily": 5, "textAlign": "center", "verticalAlign": "middle",
+      "baseline": 17, "containerId": null, "originalText": "取证：VS Code 集成浏览器 + Playwright｜getComputedStyle / getBoundingClientRect 读真实值｜视口 1440×900（另测 1920×1080）｜全程只读，未发送任何消息", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "scroll_box", "type": "rectangle", "x": 60, "y": 115, "width": 880, "height": 1065,
+      "angle": 0, "strokeColor": "#868e96", "backgroundColor": "#ffffff", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": { "type": 3 }, "seed": 2003, "version": 1,
+      "versionNonce": 2003, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false
+    },
+    {
+      "id": "t_scroll_label", "type": "text", "x": 72, "y": 120, "width": 856, "height": 18,
+      "angle": 0, "strokeColor": "#495057", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2004, "version": 1,
+      "versionNonce": 2004, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "滚动容器 .ds-virtual-list（--printable .ds-scroll-area）｜display:flex flex-direction:column｜overflow-y:auto｜padding 0｜bg transparent → body #fff｜scrollHeight 22192 / clientHeight 840",
+      "fontSize": 12.5, "fontFamily": 5, "textAlign": "left", "verticalAlign": "top",
+      "baseline": 15, "containerId": null, "originalText": "滚动容器 .ds-virtual-list（--printable .ds-scroll-area）｜display:flex flex-direction:column｜overflow-y:auto｜padding 0｜bg transparent → body #fff｜scrollHeight 22192 / clientHeight 840", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "content_col", "type": "rectangle", "x": 124, "y": 165, "width": 752, "height": 1000,
+      "angle": 0, "strokeColor": "#3964fe", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "dashed", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": { "type": 3 }, "seed": 2005, "version": 1,
+      "versionNonce": 2005, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false
+    },
+    {
+      "id": "t_col_label", "type": "text", "x": 130, "y": 143, "width": 740, "height": 18,
+      "angle": 0, "strokeColor": "#3964fe", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2006, "version": 1,
+      "versionNonce": 2006, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "蓝色虚线 = 内容列 752px 固定居中（1440/1920 均 752，1920 下 x=715）｜max-width:none，由 JS 虚拟列表固定，非 CSS",
+      "fontSize": 12.5, "fontFamily": 5, "textAlign": "left", "verticalAlign": "top",
+      "baseline": 15, "containerId": null, "originalText": "蓝色虚线 = 内容列 752px 固定居中（1440/1920 均 752，1920 下 x=715）｜max-width:none，由 JS 虚拟列表固定，非 CSS", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "user_bubble", "type": "rectangle", "x": 516, "y": 205, "width": 360, "height": 44,
+      "angle": 0, "strokeColor": "#adb2b8", "backgroundColor": "#edf3fe", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": { "type": 3 }, "seed": 2007, "version": 1,
+      "versionNonce": 2007, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false
+    },
+    {
+      "id": "user_text", "type": "text", "x": 532, "y": 215, "width": 330, "height": 24,
+      "angle": 0, "strokeColor": "#0f1115", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2008, "version": 1,
+      "versionNonce": 2008, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "免费的话用 Key 也行",
+      "fontSize": 16, "fontFamily": 5, "textAlign": "left", "verticalAlign": "middle",
+      "baseline": 19, "containerId": null, "originalText": "免费的话用 Key 也行", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "user_annot", "type": "text", "x": 132, "y": 200, "width": 368, "height": 96,
+      "angle": 0, "strokeColor": "#1c7ed6", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2009, "version": 1,
+      "versionNonce": 2009, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "① 用户气泡（靠右对齐）\n圆角 22px · padding 10px 16px · bg #EDF3FE\n文字 #0F1115 · 16px/24px · 单行高 44px\nmax-width:calc(100%-88px)≈664px · user-select:auto\n（气泡下方未观察到操作栏）",
+      "fontSize": 13, "fontFamily": 5, "textAlign": "left", "verticalAlign": "top",
+      "baseline": 16, "containerId": null, "originalText": "① 用户气泡（靠右对齐）\n圆角 22px · padding 10px 16px · bg #EDF3FE\n文字 #0F1115 · 16px/24px · 单行高 44px\nmax-width:calc(100%-88px)≈664px · user-select:auto\n（气泡下方未观察到操作栏）", "autoResize": true, "lineHeight": 1.3
+    },
+    {
+      "id": "user_lead", "type": "arrow", "x": 500, "y": 228, "width": 16, "height": 0,
+      "angle": 0, "strokeColor": "#1c7ed6", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2010, "version": 1,
+      "versionNonce": 2010, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "points": [[0, 0], [16, 0]], "lastCommittedPoint": null,
+      "startBinding": null, "endBinding": null, "startArrowhead": null, "endArrowhead": "arrow", "elbowed": false
+    },
+    {
+      "id": "gap_arrow", "type": "arrow", "x": 700, "y": 252, "width": 0, "height": 53,
+      "angle": 0, "strokeColor": "#3964fe", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "dashed", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2011, "version": 1,
+      "versionNonce": 2011, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "points": [[0, 0], [0, 53]], "lastCommittedPoint": null,
+      "startBinding": null, "endBinding": null, "startArrowhead": "arrow", "endArrowhead": "arrow", "elbowed": false
+    },
+    {
+      "id": "t_gap", "type": "text", "x": 708, "y": 268, "width": 80, "height": 20,
+      "angle": 0, "strokeColor": "#3964fe", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2012, "version": 1,
+      "versionNonce": 2012, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "50px gap",
+      "fontSize": 13, "fontFamily": 5, "textAlign": "left", "verticalAlign": "top",
+      "baseline": 16, "containerId": null, "originalText": "50px gap", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "think_fold_bg", "type": "rectangle", "x": 124, "y": 305, "width": 420, "height": 34,
+      "angle": 0, "strokeColor": "#adb2b8", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": { "type": 3 }, "seed": 2013, "version": 1,
+      "versionNonce": 2013, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false
+    },
+    {
+      "id": "think_fold_text", "type": "text", "x": 134, "y": 311, "width": 400, "height": 26,
+      "angle": 0, "strokeColor": "#61666b", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2014, "version": 1,
+      "versionNonce": 2014, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "已思考（用时 7 秒）   ⟩",
+      "fontSize": 16, "fontFamily": 5, "textAlign": "left", "verticalAlign": "middle",
+      "baseline": 19, "containerId": null, "originalText": "已思考（用时 7 秒）   ⟩", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "think_fold_annot", "type": "text", "x": 562, "y": 302, "width": 310, "height": 66,
+      "angle": 0, "strokeColor": "#f08c00", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2015, "version": 1,
+      "versionNonce": 2015, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "② 思考链 · 折叠态\n高 34px · 标题原文『已思考（用时 N 秒）』\n#61666B · 16px/28px · cursor:pointer\n右向 chevron path（viewBox 0 0 14 14）",
+      "fontSize": 12.5, "fontFamily": 5, "textAlign": "left", "verticalAlign": "top",
+      "baseline": 15, "containerId": null, "originalText": "② 思考链 · 折叠态\n高 34px · 标题原文『已思考（用时 N 秒）』\n#61666B · 16px/28px · cursor:pointer\n右向 chevron path（viewBox 0 0 14 14）", "autoResize": true, "lineHeight": 1.3
+    },
+    {
+      "id": "think_expand_bg", "type": "rectangle", "x": 124, "y": 365, "width": 752, "height": 190,
+      "angle": 0, "strokeColor": "#f08c00", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "dashed", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": { "type": 3 }, "seed": 2016, "version": 1,
+      "versionNonce": 2016, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false
+    },
+    {
+      "id": "think_expand_text", "type": "text", "x": 146, "y": 372, "width": 388, "height": 160,
+      "angle": 0, "strokeColor": "#61666b", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2017, "version": 1,
+      "versionNonce": 2017, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "› 深度思考正文（示意）：以 14px/24px 灰色 #61666B 呈现，\n　左缩进 22px，无底色、无边框。\n\n　[搜索到 45 个网页] [浏览 3 个页面]\n　↑ 思考流内 chip，34px 高\n\n　（实测单条思考内容高 2117px）",
+      "fontSize": 14, "fontFamily": 5, "textAlign": "left", "verticalAlign": "top",
+      "baseline": 17, "containerId": null, "originalText": "› 深度思考正文（示意）：以 14px/24px 灰色 #61666B 呈现，\n　左缩进 22px，无底色、无边框。\n\n　[搜索到 45 个网页] [浏览 3 个页面]\n　↑ 思考流内 chip，34px 高\n\n　（实测单条思考内容高 2117px）", "autoResize": true, "lineHeight": 1.4
+    },
+    {
+      "id": "think_expand_annot", "type": "text", "x": 550, "y": 372, "width": 312, "height": 170,
+      "angle": 0, "strokeColor": "#f08c00", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2018, "version": 1,
+      "versionNonce": 2018, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "② 思考链 · 展开态\n色 #61666B · 14px/24px\npadding 5px 0 5px 22px（左缩进22px）\n背景 transparent · border none\nbg 透明、无底色、无边框\nmax-height:none → 全量展开不滚动\n折叠/展开 = 两套不同 chevron path\n（非旋转，transform:none）",
+      "fontSize": 12.5, "fontFamily": 5, "textAlign": "left", "verticalAlign": "top",
+      "baseline": 15, "containerId": null, "originalText": "② 思考链 · 展开态\n色 #61666B · 14px/24px\npadding 5px 0 5px 22px（左缩进22px）\n背景 transparent · border none\nbg 透明、无底色、无边框\nmax-height:none → 全量展开不滚动\n折叠/展开 = 两套不同 chevron path\n（非旋转，transform:none）", "autoResize": true, "lineHeight": 1.3
+    },
+    {
+      "id": "md_title", "type": "text", "x": 132, "y": 578, "width": 740, "height": 20,
+      "angle": 0, "strokeColor": "#2b8a3e", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2019, "version": 1,
+      "versionNonce": 2019, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "③ 助手正文 / Markdown：背景 transparent · 占满 752px · padding 0 · margin-top 10px · 段间距 16px · 正文 #0F1115 · 16px/28px · 无头像（明确标注：未观察到头像）",
+      "fontSize": 13, "fontFamily": 5, "textAlign": "left", "verticalAlign": "top",
+      "baseline": 16, "containerId": null, "originalText": "③ 助手正文 / Markdown：背景 transparent · 占满 752px · padding 0 · margin-top 10px · 段间距 16px · 正文 #0F1115 · 16px/28px · 无头像（明确标注：未观察到头像）", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "p_text", "type": "text", "x": 132, "y": 604, "width": 740, "height": 48,
+      "angle": 0, "strokeColor": "#0f1115", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2020, "version": 1,
+      "versionNonce": 2020, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "助手正文段落（示意）：16px/28px，#0F1115，段落 <p> margin 0 0 16px。\n其中 行内代码 = bg #EBEEF2 / 圆角6 / #61666B / 12.25px；链接 = #3964FE；加粗继承 #0F1115。",
+      "fontSize": 15, "fontFamily": 5, "textAlign": "left", "verticalAlign": "top",
+      "baseline": 18, "containerId": null, "originalText": "助手正文段落（示意）：16px/28px，#0F1115，段落 <p> margin 0 0 16px。\n其中 行内代码 = bg #EBEEF2 / 圆角6 / #61666B / 12.25px；链接 = #3964FE；加粗继承 #0F1115。", "autoResize": true, "lineHeight": 1.3
+    },
+    {
+      "id": "h3_text", "type": "text", "x": 132, "y": 656, "width": 740, "height": 30,
+      "angle": 0, "strokeColor": "#0f1115", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2021, "version": 1,
+      "versionNonce": 2021, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "H3 标题（示意）— 20px/30px，margin 32px 0 16px",
+      "fontSize": 20, "fontFamily": 5, "textAlign": "left", "verticalAlign": "top",
+      "baseline": 24, "containerId": null, "originalText": "H3 标题（示意）— 20px/30px，margin 32px 0 16px", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "code_block_bg", "type": "rectangle", "x": 132, "y": 692, "width": 500, "height": 150,
+      "angle": 0, "strokeColor": "#adb2b8", "backgroundColor": "#f9fafb", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": { "type": 3 }, "seed": 2022, "version": 1,
+      "versionNonce": 2022, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false
+    },
+    {
+      "id": "code_banner", "type": "rectangle", "x": 132, "y": 692, "width": 500, "height": 40,
+      "angle": 0, "strokeColor": "#dee2e6", "backgroundColor": "#ffffff", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": { "type": 3 }, "seed": 2023, "version": 1,
+      "versionNonce": 2023, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false
+    },
+    {
+      "id": "code_banner_text", "type": "text", "x": 144, "y": 700, "width": 476, "height": 22,
+      "angle": 0, "strokeColor": "#61666b", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2024, "version": 1,
+      "versionNonce": 2024, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "bash                                     复制   下载",
+      "fontSize": 13, "fontFamily": 5, "textAlign": "left", "verticalAlign": "middle",
+      "baseline": 16, "containerId": null, "originalText": "bash                                     复制   下载", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "code_pre_text", "type": "text", "x": 148, "y": 742, "width": 470, "height": 70,
+      "angle": 0, "strokeColor": "#0f1115", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2025, "version": 1,
+      "versionNonce": 2025, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "$ dotnet build Chat.slnx\n> 构建完成，0 错误\n# pre: 13px/22px · padding 16px · 等宽 Menlo/Consolas",
+      "fontSize": 13, "fontFamily": 5, "textAlign": "left", "verticalAlign": "top",
+      "baseline": 16, "containerId": null, "originalText": "$ dotnet build Chat.slnx\n> 构建完成，0 错误\n# pre: 13px/22px · padding 16px · 等宽 Menlo/Consolas", "autoResize": true, "lineHeight": 1.5
+    },
+    {
+      "id": "code_annot", "type": "text", "x": 648, "y": 692, "width": 228, "height": 150,
+      "angle": 0, "strokeColor": "#2b8a3e", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2026, "version": 1,
+      "versionNonce": 2026, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "代码块\nbg #F9FAFB · 圆角 12\nmargin 16px 0 11px\nbanner 白色 40px：\n  语言名 + 复制/下载(63×28)\npre padding 16 · 13px/22px\n等宽字体 · overflow-x:auto\n文字 #0F1115",
+      "fontSize": 12.5, "fontFamily": 5, "textAlign": "left", "verticalAlign": "top",
+      "baseline": 15, "containerId": null, "originalText": "代码块\nbg #F9FAFB · 圆角 12\nmargin 16px 0 11px\nbanner 白色 40px：\n  语言名 + 复制/下载(63×28)\npre padding 16 · 13px/22px\n等宽字体 · overflow-x:auto\n文字 #0F1115", "autoResize": true, "lineHeight": 1.3
+    },
+    {
+      "id": "quote_bar", "type": "rectangle", "x": 132, "y": 858, "width": 3, "height": 52,
+      "angle": 0, "strokeColor": "#adb2b8", "backgroundColor": "#adb2b8", "fillStyle": "solid",
+      "strokeWidth": 0, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2027, "version": 1,
+      "versionNonce": 2027, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false
+    },
+    {
+      "id": "quote_text", "type": "text", "x": 148, "y": 860, "width": 486, "height": 50,
+      "angle": 0, "strokeColor": "#0f1115", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2028, "version": 1,
+      "versionNonce": 2028, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "「引用块示意」\nborder-left 2px #ADB2B8 · 左 padding 14px · 无背景 · 16px/28px",
+      "fontSize": 15, "fontFamily": 5, "textAlign": "left", "verticalAlign": "top",
+      "baseline": 18, "containerId": null, "originalText": "「引用块示意」\nborder-left 2px #ADB2B8 · 左 padding 14px · 无背景 · 16px/28px", "autoResize": true, "lineHeight": 1.35
+    },
+    {
+      "id": "quote_annot", "type": "text", "x": 648, "y": 858, "width": 228, "height": 60,
+      "angle": 0, "strokeColor": "#2b8a3e", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2029, "version": 1,
+      "versionNonce": 2029, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "引用块 blockquote\n左边框 2px #ADB2B8\n左 padding 14px · 无背景\nmargin 16px 0 0 · 16px/28px",
+      "fontSize": 12.5, "fontFamily": 5, "textAlign": "left", "verticalAlign": "top",
+      "baseline": 15, "containerId": null, "originalText": "引用块 blockquote\n左边框 2px #ADB2B8\n左 padding 14px · 无背景\nmargin 16px 0 0 · 16px/28px", "autoResize": true, "lineHeight": 1.3
+    },
+    {
+      "id": "table_viewport", "type": "rectangle", "x": 132, "y": 925, "width": 500, "height": 105,
+      "angle": 0, "strokeColor": "#3964fe", "backgroundColor": "#f8f9fa", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": { "type": 3 }, "seed": 2030, "version": 1,
+      "versionNonce": 2030, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false
+    },
+    {
+      "id": "table_wide", "type": "rectangle", "x": 140, "y": 947, "width": 560, "height": 60,
+      "angle": 0, "strokeColor": "#adb2b8", "backgroundColor": "#e9ecef", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "dashed", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2031, "version": 1,
+      "versionNonce": 2031, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false
+    },
+    {
+      "id": "table_text", "type": "text", "x": 146, "y": 931, "width": 480, "height": 46,
+      "angle": 0, "strokeColor": "#0f1115", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2032, "version": 1,
+      "versionNonce": 2032, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "表格（示意）：项目 │ 实测值 │ 来源 │ 备注",
+      "fontSize": 14, "fontFamily": 5, "textAlign": "left", "verticalAlign": "top",
+      "baseline": 17, "containerId": null, "originalText": "表格（示意）：项目 │ 实测值 │ 来源 │ 备注", "autoResize": true, "lineHeight": 1.3
+    },
+    {
+      "id": "table_annot", "type": "text", "x": 648, "y": 925, "width": 228, "height": 110,
+      "angle": 0, "strokeColor": "#2b8a3e", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2033, "version": 1,
+      "versionNonce": 2033, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "表格（超宽横向滚动）\n实测宽 1102px > 752px 列\n外层 .ds-scroll-area overflow-x:auto\nth/td padding 10px 16px 10px 0\n15px/25px · #0F1115\nth 背景 transparent · 无可见边框",
+      "fontSize": 12.5, "fontFamily": 5, "textAlign": "left", "verticalAlign": "top",
+      "baseline": 15, "containerId": null, "originalText": "表格（超宽横向滚动）\n实测宽 1102px > 752px 列\n外层 .ds-scroll-area overflow-x:auto\nth/td padding 10px 16px 10px 0\n15px/25px · #0F1115\nth 背景 transparent · 无可见边框", "autoResize": true, "lineHeight": 1.3
+    },
+    {
+      "id": "action_bg", "type": "rectangle", "x": 132, "y": 1088, "width": 300, "height": 40,
+      "angle": 0, "strokeColor": "#adb2b8", "backgroundColor": "#f1f3f5", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": { "type": 3 }, "seed": 2034, "version": 1,
+      "versionNonce": 2034, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false
+    },
+    {
+      "id": "btn1", "type": "ellipse", "x": 138, "y": 1094, "width": 28, "height": 28,
+      "angle": 0, "strokeColor": "#adb2b8", "backgroundColor": "#ffffff", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2035, "version": 1,
+      "versionNonce": 2035, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false
+    },
+    {
+      "id": "btn2", "type": "ellipse", "x": 176, "y": 1094, "width": 28, "height": 28,
+      "angle": 0, "strokeColor": "#adb2b8", "backgroundColor": "#ffffff", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2036, "version": 1,
+      "versionNonce": 2036, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false
+    },
+    {
+      "id": "btn3", "type": "ellipse", "x": 214, "y": 1094, "width": 28, "height": 28,
+      "angle": 0, "strokeColor": "#adb2b8", "backgroundColor": "#ffffff", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2037, "version": 1,
+      "versionNonce": 2037, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false
+    },
+    {
+      "id": "btn4", "type": "ellipse", "x": 252, "y": 1094, "width": 28, "height": 28,
+      "angle": 0, "strokeColor": "#adb2b8", "backgroundColor": "#ffffff", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2038, "version": 1,
+      "versionNonce": 2038, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false
+    },
+    {
+      "id": "btn5", "type": "ellipse", "x": 290, "y": 1094, "width": 28, "height": 28,
+      "angle": 0, "strokeColor": "#adb2b8", "backgroundColor": "#ffffff", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2039, "version": 1,
+      "versionNonce": 2039, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false
+    },
+    {
+      "id": "btn6", "type": "ellipse", "x": 328, "y": 1094, "width": 28, "height": 28,
+      "angle": 0, "strokeColor": "#adb2b8", "backgroundColor": "#ffffff", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2040, "version": 1,
+      "versionNonce": 2040, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false
+    },
+    {
+      "id": "b1", "type": "text", "x": 138, "y": 1102, "width": 28, "height": 16,
+      "angle": 0, "strokeColor": "#81858c", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2041, "version": 1,
+      "versionNonce": 2041, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "复",
+      "fontSize": 12, "fontFamily": 5, "textAlign": "center", "verticalAlign": "middle",
+      "baseline": 14, "containerId": null, "originalText": "复", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "b2", "type": "text", "x": 176, "y": 1102, "width": 28, "height": 16,
+      "angle": 0, "strokeColor": "#81858c", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2042, "version": 1,
+      "versionNonce": 2042, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "重",
+      "fontSize": 12, "fontFamily": 5, "textAlign": "center", "verticalAlign": "middle",
+      "baseline": 14, "containerId": null, "originalText": "重", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "b3", "type": "text", "x": 214, "y": 1102, "width": 28, "height": 16,
+      "angle": 0, "strokeColor": "#81858c", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2043, "version": 1,
+      "versionNonce": 2043, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "赞",
+      "fontSize": 12, "fontFamily": 5, "textAlign": "center", "verticalAlign": "middle",
+      "baseline": 14, "containerId": null, "originalText": "赞", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "b4", "type": "text", "x": 252, "y": 1102, "width": 28, "height": 16,
+      "angle": 0, "strokeColor": "#81858c", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2044, "version": 1,
+      "versionNonce": 2044, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "踩",
+      "fontSize": 12, "fontFamily": 5, "textAlign": "center", "verticalAlign": "middle",
+      "baseline": 14, "containerId": null, "originalText": "踩", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "b5", "type": "text", "x": 290, "y": 1102, "width": 28, "height": 16,
+      "angle": 0, "strokeColor": "#81858c", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2045, "version": 1,
+      "versionNonce": 2045, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "读",
+      "fontSize": 12, "fontFamily": 5, "textAlign": "center", "verticalAlign": "middle",
+      "baseline": 14, "containerId": null, "originalText": "读", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "b6", "type": "text", "x": 328, "y": 1102, "width": 28, "height": 16,
+      "angle": 0, "strokeColor": "#81858c", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2046, "version": 1,
+      "versionNonce": 2046, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "享",
+      "fontSize": 12, "fontFamily": 5, "textAlign": "center", "verticalAlign": "middle",
+      "baseline": 14, "containerId": null, "originalText": "享", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "action_annot", "type": "text", "x": 458, "y": 1078, "width": 414, "height": 100,
+      "angle": 0, "strokeColor": "#ae3ec9", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2047, "version": 1,
+      "versionNonce": 2047, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "④ 操作栏（hover 显示）\nopacity 0→1 · 0.2s cubic-bezier(.4,0,.2,1) · position:static（文档流）\n6×圆形按钮 28×28 · radius 4096px · gap 10px（步进38）\n左对齐 x=475 · 图标 #81858C · hover底 rgba(38,49,72,0.06)\n顺序：复制 / 重新生成 / 赞 / 踩 / 朗读 / 分享（无「更多」按钮）",
+      "fontSize": 12.5, "fontFamily": 5, "textAlign": "left", "verticalAlign": "top",
+      "baseline": 15, "containerId": null, "originalText": "④ 操作栏（hover 显示）\nopacity 0→1 · 0.2s cubic-bezier(.4,0,.2,1) · position:static（文档流）\n6×圆形按钮 28×28 · radius 4096px · gap 10px（步进38）\n左对齐 x=475 · 图标 #81858C · hover底 rgba(38,49,72,0.06)\n顺序：复制 / 重新生成 / 赞 / 踩 / 朗读 / 分享（无「更多」按钮）", "autoResize": true, "lineHeight": 1.3
+    },
+    {
+      "id": "disclaimer", "type": "text", "x": 132, "y": 1142, "width": 740, "height": 22,
+      "angle": 0, "strokeColor": "#61666b", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2048, "version": 1,
+      "versionNonce": 2048, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "本回答由 AI 生成，内容仅供参考，请仔细甄别　　（AI 免责声明 752×22 · margin 16px 0 0）",
+      "fontSize": 15, "fontFamily": 5, "textAlign": "left", "verticalAlign": "top",
+      "baseline": 18, "containerId": null, "originalText": "本回答由 AI 生成，内容仅供参考，请仔细甄别　　（AI 免责声明 752×22 · margin 16px 0 0）", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "palette_card", "type": "rectangle", "x": 970, "y": 115, "width": 540, "height": 1065,
+      "angle": 0, "strokeColor": "#343a40", "backgroundColor": "#f8f9fa", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": { "type": 3 }, "seed": 2049, "version": 1,
+      "versionNonce": 2049, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false
+    },
+    {
+      "id": "t_palette_title", "type": "text", "x": 988, "y": 126, "width": 504, "height": 30,
+      "angle": 0, "strokeColor": "#1e1e1e", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2050, "version": 1,
+      "versionNonce": 2050, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "配色 & 参数速查（语义键 → 实测值）",
+      "fontSize": 18, "fontFamily": 5, "textAlign": "left", "verticalAlign": "middle",
+      "baseline": 22, "containerId": null, "originalText": "配色 & 参数速查（语义键 → 实测值）", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "g1_t", "type": "text", "x": 988, "y": 164, "width": 504, "height": 20,
+      "angle": 0, "strokeColor": "#3964fe", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2051, "version": 1,
+      "versionNonce": 2051, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "【容器 / 布局】",
+      "fontSize": 14, "fontFamily": 5, "textAlign": "left", "verticalAlign": "top",
+      "baseline": 17, "containerId": null, "originalText": "【容器 / 布局】", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "g1_p", "type": "text", "x": 988, "y": 186, "width": 504, "height": 108,
+      "angle": 0, "strokeColor": "#1e1e1e", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2052, "version": 1,
+      "versionNonce": 2052, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "AppBg = #FFFFFF\nMessageListBg = transparent（→AppBg）\nContentMaxWidth = 752px（固定居中）\nMessageGap = 50px\nMessageListPadX/Y = 0px",
+      "fontSize": 13, "fontFamily": 5, "textAlign": "left", "verticalAlign": "top",
+      "baseline": 16, "containerId": null, "originalText": "AppBg = #FFFFFF\nMessageListBg = transparent（→AppBg）\nContentMaxWidth = 752px（固定居中）\nMessageGap = 50px\nMessageListPadX/Y = 0px", "autoResize": true, "lineHeight": 1.35
+    },
+    {
+      "id": "g2_t", "type": "text", "x": 988, "y": 302, "width": 504, "height": 20,
+      "angle": 0, "strokeColor": "#1c7ed6", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2053, "version": 1,
+      "versionNonce": 2053, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "【用户气泡】",
+      "fontSize": 14, "fontFamily": 5, "textAlign": "left", "verticalAlign": "top",
+      "baseline": 17, "containerId": null, "originalText": "【用户气泡】", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "g2_p", "type": "text", "x": 988, "y": 324, "width": 504, "height": 152,
+      "angle": 0, "strokeColor": "#1e1e1e", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2054, "version": 1,
+      "versionNonce": 2054, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "UserBubbleBg = #EDF3FE\nUserBubbleCorner = 22px\nUserBubblePadding = 10px 16px\nUserBubbleMaxWidth = calc(100%-88px)\nUserBubbleTextColor = #0F1115\nUserBubbleFontSize = 16px/24px\nUserBubbleSelectable = true\nUserAvatar = 未观察到",
+      "fontSize": 13, "fontFamily": 5, "textAlign": "left", "verticalAlign": "top",
+      "baseline": 16, "containerId": null, "originalText": "UserBubbleBg = #EDF3FE\nUserBubbleCorner = 22px\nUserBubblePadding = 10px 16px\nUserBubbleMaxWidth = calc(100%-88px)\nUserBubbleTextColor = #0F1115\nUserBubbleFontSize = 16px/24px\nUserBubbleSelectable = true\nUserAvatar = 未观察到", "autoResize": true, "lineHeight": 1.35
+    },
+    {
+      "id": "g3_t", "type": "text", "x": 988, "y": 486, "width": 504, "height": 20,
+      "angle": 0, "strokeColor": "#2b8a3e", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2055, "version": 1,
+      "versionNonce": 2055, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "【助手正文】",
+      "fontSize": 14, "fontFamily": 5, "textAlign": "left", "verticalAlign": "top",
+      "baseline": 17, "containerId": null, "originalText": "【助手正文】", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "g3_p", "type": "text", "x": 988, "y": 508, "width": 504, "height": 114,
+      "angle": 0, "strokeColor": "#1e1e1e", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2056, "version": 1,
+      "versionNonce": 2056, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "AssistantTextColor = #0F1115\nAssistantFontSize = 16px/28px\nAssistantPadding = 0px\nAssistantMarginTop = 10px\nParagraphGap = 16px\nAssistantAvatar = 未观察到",
+      "fontSize": 13, "fontFamily": 5, "textAlign": "left", "verticalAlign": "top",
+      "baseline": 16, "containerId": null, "originalText": "AssistantTextColor = #0F1115\nAssistantFontSize = 16px/28px\nAssistantPadding = 0px\nAssistantMarginTop = 10px\nParagraphGap = 16px\nAssistantAvatar = 未观察到", "autoResize": true, "lineHeight": 1.35
+    },
+    {
+      "id": "g4_t", "type": "text", "x": 988, "y": 632, "width": 504, "height": 20,
+      "angle": 0, "strokeColor": "#f08c00", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2057, "version": 1,
+      "versionNonce": 2057, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "【思考链】",
+      "fontSize": 14, "fontFamily": 5, "textAlign": "left", "verticalAlign": "top",
+      "baseline": 17, "containerId": null, "originalText": "【思考链】", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "g4_p", "type": "text", "x": 988, "y": 654, "width": 504, "height": 190,
+      "angle": 0, "strokeColor": "#1e1e1e", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2058, "version": 1,
+      "versionNonce": 2058, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "ThinkingHeaderText = 已思考（用时 N 秒）\nThinkingHeaderColor = #61666B\nThinkingHeaderHeight = 34px\nThinkingTextColor = #61666B\nThinkingFontSize = 14px/24px\nThinkingBoxBg = transparent（无底色）\nThinkingBoxBorder = none\nThinkingBoxPad = 5px 0 5px 22px\nThinkingBoxMaxHeight = none（不滚动）",
+      "fontSize": 13, "fontFamily": 5, "textAlign": "left", "verticalAlign": "top",
+      "baseline": 16, "containerId": null, "originalText": "ThinkingHeaderText = 已思考（用时 N 秒）\nThinkingHeaderColor = #61666B\nThinkingHeaderHeight = 34px\nThinkingTextColor = #61666B\nThinkingFontSize = 14px/24px\nThinkingBoxBg = transparent（无底色）\nThinkingBoxBorder = none\nThinkingBoxPad = 5px 0 5px 22px\nThinkingBoxMaxHeight = none（不滚动）", "autoResize": true, "lineHeight": 1.35
+    },
+    {
+      "id": "g5_t", "type": "text", "x": 988, "y": 852, "width": 504, "height": 20,
+      "angle": 0, "strokeColor": "#ae3ec9", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2059, "version": 1,
+      "versionNonce": 2059, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "【操作栏】",
+      "fontSize": 14, "fontFamily": 5, "textAlign": "left", "verticalAlign": "top",
+      "baseline": 17, "containerId": null, "originalText": "【操作栏】", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "g5_p", "type": "text", "x": 988, "y": 874, "width": 504, "height": 152,
+      "angle": 0, "strokeColor": "#1e1e1e", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2060, "version": 1,
+      "versionNonce": 2060, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "ActionBarTrigger = hover（opacity 0→1）\nActionBarGap = 10px\nActionBarBtnSize = 28×28px\nActionBarBtnRadius = 4096px\nActionBarIconColor = #81858C\nActionBarHoverBg = rgba(38,49,72,0.06)\nActionBarOrder = 复制/重生成/赞/踩/朗读/分享",
+      "fontSize": 12.5, "fontFamily": 5, "textAlign": "left", "verticalAlign": "top",
+      "baseline": 15, "containerId": null, "originalText": "ActionBarTrigger = hover（opacity 0→1）\nActionBarGap = 10px\nActionBarBtnSize = 28×28px\nActionBarBtnRadius = 4096px\nActionBarIconColor = #81858C\nActionBarHoverBg = rgba(38,49,72,0.06)\nActionBarOrder = 复制/重生成/赞/踩/朗读/分享", "autoResize": true, "lineHeight": 1.35
+    },
+    {
+      "id": "g6_t", "type": "text", "x": 988, "y": 1036, "width": 504, "height": 20,
+      "angle": 0, "strokeColor": "#e03131", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2061, "version": 1,
+      "versionNonce": 2061, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "【Markdown】",
+      "fontSize": 14, "fontFamily": 5, "textAlign": "left", "verticalAlign": "top",
+      "baseline": 17, "containerId": null, "originalText": "【Markdown】", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "g6_p", "type": "text", "x": 988, "y": 1058, "width": 504, "height": 116,
+      "angle": 0, "strokeColor": "#1e1e1e", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2062, "version": 1,
+      "versionNonce": 2062, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "CodeBlockBg = #F9FAFB\nCodeBlockCorner = 12px\nCodeBannerBg = #FFFFFF / H=40px\nCodeFontSize = 13px\nInlineCodeBg = #EBEEF2\nInlineCodeColor = #61666B\nBlockquoteBorderLeft = 2px #ADB2B8\nTableScrollX = true（1102>752）\nLinkColor = #3964FE · Heading3FontSize = 20px",
+      "fontSize": 12.5, "fontFamily": 5, "textAlign": "left", "verticalAlign": "top",
+      "baseline": 15, "containerId": null, "originalText": "CodeBlockBg = #F9FAFB\nCodeBlockCorner = 12px\nCodeBannerBg = #FFFFFF / H=40px\nCodeFontSize = 13px\nInlineCodeBg = #EBEEF2\nInlineCodeColor = #61666B\nBlockquoteBorderLeft = 2px #ADB2B8\nTableScrollX = true（1102>752）\nLinkColor = #3964FE · Heading3FontSize = 20px", "autoResize": true, "lineHeight": 1.35
+    },
+    {
+      "id": "t_footer", "type": "text", "x": 60, "y": 1196, "width": 1450, "height": 24,
+      "angle": 0, "strokeColor": "#c92a2a", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 2063, "version": 1,
+      "versionNonce": 2063, "isDeleted": false, "boundElements": null, "updated": 1731000000000,
+      "link": null, "locked": false, "text": "注：深色主题 / 窄屏响应式 / 实时生成态（停止按钮）未取证，不臆造；全部数据来自 getComputedStyle 实测（浅色主题 + 已登录桌面宽屏 sidebar 261px）。",
+      "fontSize": 15, "fontFamily": 5, "textAlign": "left", "verticalAlign": "middle",
+      "baseline": 18, "containerId": null, "originalText": "注：深色主题 / 窄屏响应式 / 实时生成态（停止按钮）未取证，不臆造；全部数据来自 getComputedStyle 实测（浅色主题 + 已登录桌面宽屏 sidebar 261px）。", "autoResize": true, "lineHeight": 1.25
+    }
+  ],
+  "appState": {
+    "gridSize": null,
+    "viewBackgroundColor": "#ffffff"
+  },
+  "files": {}
+}

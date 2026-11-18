@@ -13,6 +13,8 @@
     <PackageReference Include="Avalonia.Fonts.Inter" />
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="Markdig" />
+    <PackageReference Include="SukiUI" />
+    <PackageReference Include="SukiUI.Dock" />
     <ProjectReference Include="../Chat.Abstractions/Chat.Abstractions.csproj" />
     <ProjectReference Include="../Chat.Core/Chat.Core.csproj" />
     <ProjectReference Include="../Chat.Storage/Chat.Storage.csproj" />

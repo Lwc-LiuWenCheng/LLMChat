@@ -1,19 +1,151 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:sukiUi="clr-namespace:SukiUI;assembly=SukiUI"
              x:Class="Chat.App.App"
-             RequestedThemeVariant="Dark">
-  <Application.Styles>
-    <FluentTheme />
-    <Style Selector="Button">
-      <Setter Property="CornerRadius" Value="6" />
-      <Setter Property="Padding" Value="12,6" />
-    </Style>
-    <Style Selector="Button.accent">
-      <Setter Property="Background" Value="#4C8BF5" />
-      <Setter Property="Foreground" Value="White" />
-    </Style>
-    <Style Selector="TextBox">
-      <Setter Property="CornerRadius" Value="6" />
-    </Style>
-  </Application.Styles>
+             RequestedThemeVariant="Light">
+    <!-- 自定义主题画刷：Light/Dark 各一套，控件统一用 DynamicResource 引用。
+         SukiTheme.SwitchBaseTheme() 切换时这些画刷跟着换，明暗切换才真正生效。 -->
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <!-- 亮色：全部取自 DeepSeek 网页 body.light 的 computedStyle 与 CSS 变量实测值 -->
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="AppBgBrush" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="SidebarBgBrush" Color="#F9FAFB" />
+                    <SolidColorBrush x:Key="SidebarDividerBrush" Color="#0A000000" />
+                    <SolidColorBrush x:Key="ComposerBgBrush" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="ComposerBorderBrush" Color="#1A000000" />
+                    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#0F1115" />
+                    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#81858C" />
+                    <SolidColorBrush x:Key="PlaceholderBrush" Color="#ADB2B8" />
+                    <SolidColorBrush x:Key="BorderSubtleBrush" Color="#0A000000" />
+                    <SolidColorBrush x:Key="HoverBgBrush" Color="#F1F3F5" />
+                    <SolidColorBrush x:Key="PressedBgBrush" Color="#EBEEF2" />
+                    <SolidColorBrush x:Key="ToggleOffBorderBrush" Color="#1A000000" />
+                    <SolidColorBrush x:Key="ToggleOnBgBrush" Color="#EDF3FE" />
+                    <SolidColorBrush x:Key="ToggleOnTextBrush" Color="#3964FE" />
+                    <SolidColorBrush x:Key="ToggleOnBorderBrush" Color="#B7C8FE" />
+                    <SolidColorBrush x:Key="AccentColorBrush" Color="#3964FE" />
+                    <SolidColorBrush x:Key="AccentHoverBrush" Color="#5686FE" />
+                    <SolidColorBrush x:Key="AccentPressedBrush" Color="#2F4C8F" />
+                    <SolidColorBrush x:Key="CodeBgBrush" Color="#F9FAFB" />
+                    <SolidColorBrush x:Key="UserBubbleBrush" Color="#EDF3FE" />
+                    <SolidColorBrush x:Key="ScrimColorBrush" Color="#66000000" />
+                    <SolidColorBrush x:Key="StatusWarnBrush" Color="#DD8629" />
+                </ResourceDictionary>
+                <!-- 暗色：取自 DeepSeek 网页 body.dark 的 computedStyle 与 CSS 变量实测值 -->
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="AppBgBrush" Color="#151517" />
+                    <SolidColorBrush x:Key="SidebarBgBrush" Color="#1B1B1C" />
+                    <SolidColorBrush x:Key="SidebarDividerBrush" Color="#0FFFFFFF" />
+                    <SolidColorBrush x:Key="ComposerBgBrush" Color="#2C2C2E" />
+                    <SolidColorBrush x:Key="ComposerBorderBrush" Color="#0FFFFFFF" />
+                    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#F9FAFB" />
+                    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#ADB2B8" />
+                    <SolidColorBrush x:Key="PlaceholderBrush" Color="#81858C" />
+                    <SolidColorBrush x:Key="BorderSubtleBrush" Color="#0FFFFFFF" />
+                    <SolidColorBrush x:Key="HoverBgBrush" Color="#2C2C2E" />
+                    <SolidColorBrush x:Key="PressedBgBrush" Color="#353638" />
+                    <SolidColorBrush x:Key="ToggleOffBorderBrush" Color="#1FFFFFFF" />
+                    <SolidColorBrush x:Key="ToggleOnBgBrush" Color="#283142" />
+                    <SolidColorBrush x:Key="ToggleOnTextBrush" Color="#679EFE" />
+                    <SolidColorBrush x:Key="ToggleOnBorderBrush" Color="#4868B2" />
+                    <SolidColorBrush x:Key="AccentColorBrush" Color="#5686FE" />
+                    <SolidColorBrush x:Key="AccentHoverBrush" Color="#3964FE" />
+                    <SolidColorBrush x:Key="AccentPressedBrush" Color="#4868B2" />
+                    <SolidColorBrush x:Key="CodeBgBrush" Color="#1B1B1C" />
+                    <SolidColorBrush x:Key="UserBubbleBrush" Color="#2C2C2E" />
+                    <SolidColorBrush x:Key="ScrimColorBrush" Color="#80000000" />
+                    <SolidColorBrush x:Key="StatusWarnBrush" Color="#F7AD31" />
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+
+    <Application.Styles>
+        <sukiUi:SukiTheme Locale="zh-CN" ThemeColor="Blue"  />
+
+        <!-- 全局文本默认色随主题，取网页 label-primary 变量。 -->
+        <Style Selector="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        </Style>
+        <Style Selector="SelectableTextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        </Style>
+        <!-- 输入框无边框透明底，placeholder 用网页 caption 色。 -->
+        <Style Selector="TextBox">
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+            <Setter Property="CaretBrush" Value="{DynamicResource AccentColorBrush}" />
+        </Style>
+
+        <!-- 幽灵按钮：透明底、主文字色（网页 iconLabelPrimary）。 -->
+        <Style Selector="Button.ghost, ToggleButton.ghost">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Padding" Value="8,5" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+        <Style Selector="Button.ghost:pointerover, ToggleButton.ghost:pointerover">
+            <Setter Property="Background" Value="{DynamicResource HoverBgBrush}" />
+        </Style>
+        <Style Selector="Button.ghost:pressed, ToggleButton.ghost:pressed">
+            <Setter Property="Background" Value="{DynamicResource PressedBgBrush}" />
+        </Style>
+        <Style Selector="Button.ghost:disabled, ToggleButton.ghost:disabled">
+            <Setter Property="Opacity" Value="0.4" />
+            <Setter Property="Cursor" Value="Arrow" />
+        </Style>
+
+        <!-- 深度思考/智能搜索开关（网页 .ds-toggle-button：圆角18、1px边框、选中换底色/文字/边框）。 -->
+        <Style Selector="ToggleButton.toggle">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ToggleOffBorderBrush}" />
+            <Setter Property="CornerRadius" Value="18" />
+            <Setter Property="Padding" Value="10,5" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+        <Style Selector="ToggleButton.toggle:checked">
+            <Setter Property="Background" Value="{DynamicResource ToggleOnBgBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource ToggleOnTextBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ToggleOnBorderBrush}" />
+        </Style>
+
+        <!-- 主按钮：网页品牌蓝实心。 -->
+        <Style Selector="Button.accent, ToggleButton.accent">
+            <Setter Property="Background" Value="{DynamicResource AccentColorBrush}" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="16,7" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+        <Style Selector="Button.accent:pointerover, ToggleButton.accent:pointerover">
+            <Setter Property="Background" Value="{DynamicResource AccentHoverBrush}" />
+        </Style>
+        <Style Selector="Button.accent:pressed, ToggleButton.accent:pressed">
+            <Setter Property="Background" Value="{DynamicResource AccentPressedBrush}" />
+        </Style>
+        <Style Selector="Button.accent:disabled, ToggleButton.accent:disabled">
+            <Setter Property="Opacity" Value="0.4" />
+            <Setter Property="Cursor" Value="Arrow" />
+        </Style>
+
+        <!-- 圆形图标按钮（发送/停止）：网页 34px 圆形。 -->
+        <Style Selector="Button.iconRound">
+            <Setter Property="CornerRadius" Value="999" />
+            <Setter Property="Width" Value="34" />
+            <Setter Property="Height" Value="34" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+    </Application.Styles>
 </Application>

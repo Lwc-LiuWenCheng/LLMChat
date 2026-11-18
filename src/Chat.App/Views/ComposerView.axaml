@@ -1,0 +1,95 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:suki="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+             xmlns:app="using:Chat.App"
+             xmlns:abstractions="using:Chat.Abstractions"
+             xmlns:sys="using:System"
+             mc:Ignorable="d"
+             d:DesignWidth="700"
+             d:DesignHeight="160"
+             x:Class="Chat.App.Views.ComposerView">
+  <!-- 外框按网页实测：圆角 24、白底、1px 边框。 -->
+  <Border Background="{DynamicResource ComposerBgBrush}"
+          BorderBrush="{DynamicResource ComposerBorderBrush}"
+          BorderThickness="1"
+          CornerRadius="24"
+          Padding="16,12">
+    <StackPanel Spacing="6">
+      <TextBox x:Name="ComposerBox"
+               Text="{Binding Composer}"
+               AcceptsReturn="True"
+               TextWrapping="Wrap"
+               MinHeight="48"
+               MaxHeight="200"
+               IsEnabled="{Binding CanEditComposer}"
+               PlaceholderText="{x:Static app:AppBranding.ComposerPlaceholder}"
+               Background="Transparent"
+               BorderThickness="0"
+               FontSize="14" />
+
+      <!-- 底部工具行：左（附件/思考/搜索），右（模型·强度简洁下拉 + 发送/停止）。 -->
+      <Grid ColumnDefinitions="*,Auto">
+        <!-- 左下：网页真实图标。深度思考已合并进右下强度下拉，这里保留开关以对齐网页两枚 toggle。 -->
+        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+          <Button Classes="ghost" IsEnabled="False" ToolTip.Tip="添加附件（暂未开放）"
+                  Width="34" Height="34">
+            <Viewbox Width="16" Height="16">
+              <Path Data="{x:Static app:AppIcons.Attachment}" Fill="{DynamicResource TextPrimaryBrush}" Stretch="Uniform" />
+            </Viewbox>
+          </Button>
+          <ToggleButton Classes="toggle" IsChecked="{Binding IsDeepThinkEnabled}"
+                        ToolTip.Tip="深度思考">
+            <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+              <Viewbox Width="16" Height="16">
+                <Path Data="{x:Static app:AppIcons.DeepThink}" Stretch="Uniform"
+                      Fill="{Binding $parent[ToggleButton].Foreground}" />
+              </Viewbox>
+              <TextBlock Text="深度思考" FontSize="13" />
+            </StackPanel>
+          </ToggleButton>
+          <ToggleButton Classes="toggle" IsChecked="{Binding IsWebSearchEnabled}"
+                        ToolTip.Tip="智能搜索">
+            <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+              <Viewbox Width="16" Height="16">
+                <Path Data="{x:Static app:AppIcons.WebSearch}" Stretch="Uniform"
+                      Fill="{Binding $parent[ToggleButton].Foreground}" />
+              </Viewbox>
+              <TextBlock Text="智能搜索" FontSize="13" />
+            </StackPanel>
+          </ToggleButton>
+        </StackPanel>
+
+        <!-- 右下：简洁下拉（模型 · 强度）参考用户图；发送/停止为网页真实箭头图标。 -->
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+          <!-- 简洁下拉：收起时显示「模型 · 强度」一行（ModeDisplay），展开列出强度档位。 -->
+          <ComboBox x:Name="ModeCombo"
+                    ItemsSource="{Binding ThinkingLevels}"
+                    SelectedItem="{Binding ThinkingLevel}"
+                    FontSize="12" MinHeight="32" MaxHeight="32" MinWidth="120"
+                    ToolTip.Tip="思考强度">
+            <ComboBox.SelectionBoxItemTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding $parent[ComboBox].DataContext.ModeDisplay}"
+                           FontSize="12" TextTrimming="CharacterEllipsis" />
+              </DataTemplate>
+            </ComboBox.SelectionBoxItemTemplate>
+          </ComboBox>
+
+          <Button Classes="accent iconRound" Command="{Binding SendCommand}"
+                  IsVisible="{Binding ShowSend}" ToolTip.Tip="发送">
+            <Viewbox Width="16" Height="16">
+              <Path Data="{x:Static app:AppIcons.Send}" Fill="White" Stretch="Uniform" />
+            </Viewbox>
+          </Button>
+          <Button Classes="ghost iconRound" Command="{Binding StopCommand}"
+                  IsVisible="{Binding ShowStop}" ToolTip.Tip="停止生成">
+            <Border Width="12" Height="12" CornerRadius="2"
+                    Background="{Binding $parent[Button].Foreground}" />
+          </Button>
+        </StackPanel>
+      </Grid>
+    </StackPanel>
+  </Border>
+</UserControl>
