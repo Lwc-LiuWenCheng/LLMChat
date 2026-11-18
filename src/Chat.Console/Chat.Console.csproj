@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Chat.Console</RootNamespace>
+    <AssemblyName>llmchat-cli</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Chat.Console.Tests" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Chat.Abstractions/Chat.Abstractions.csproj" />
+    <ProjectReference Include="../Chat.Kernel/Chat.Kernel.csproj" />
+    <ProjectReference Include="../Chat.Providers.DeepSeek/Chat.Providers.DeepSeek.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../Chat.Providers.OpenAiCompatible/Chat.Providers.OpenAiCompatible.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../Chat.Providers.OpenCodeGo/Chat.Providers.OpenCodeGo.csproj" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <!-- 与 Chat.App 相同的插件布局规则：构建后按 manifest 的 id/version 把插件产物放进
+       $(OutDir)plugins/<id>/<version>/，运行时由 PluginCatalog 扫描。CLI 不引用 Avalonia。 -->
+  <ItemGroup>
+    <BuiltinPluginManifest Include="$(MSBuildThisFileDirectory)../*/manifest.json">
+      <PluginDirectory>%(RootDir)%(Directory)</PluginDirectory>
+      <PluginId>$([System.Text.RegularExpressions.Regex]::Replace($([System.IO.File]::ReadAllText('%(FullPath)')), '^[\s\S]*?"id"\s*:\s*"([^"]+)"[\s\S]*$', '$1'))</PluginId>
+      <PluginVersion>$([System.Text.RegularExpressions.Regex]::Replace($([System.IO.File]::ReadAllText('%(FullPath)')), '^[\s\S]*?"version"\s*:\s*"([^"]+)"[\s\S]*$', '$1'))</PluginVersion>
+      <PluginAssembly>$([System.Text.RegularExpressions.Regex]::Replace($([System.IO.File]::ReadAllText('%(FullPath)')), '^[\s\S]*?"entryAssembly"\s*:\s*"([^"]+)"[\s\S]*$', '$1'))</PluginAssembly>
+    </BuiltinPluginManifest>
+  </ItemGroup>
+
+  <Target Name="CopyBuiltinPlugins" AfterTargets="Build">
+    <ItemGroup>
+      <BuiltinPluginFiles Include="@(BuiltinPluginManifest->'%(PluginDirectory)bin/$(Configuration)/$(TargetFramework)/%(PluginAssembly)')" />
+      <BuiltinPluginFiles Include="@(BuiltinPluginManifest->'%(PluginDirectory)bin/$(Configuration)/$(TargetFramework)/manifest.json')" />
+    </ItemGroup>
+    <Copy SourceFiles="@(BuiltinPluginFiles)" DestinationFolder="$(OutDir)plugins/%(PluginId)/%(PluginVersion)" SkipUnchangedFiles="true" />
+  </Target>
+</Project>

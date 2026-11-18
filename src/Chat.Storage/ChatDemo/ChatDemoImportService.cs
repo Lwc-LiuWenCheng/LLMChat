@@ -213,11 +213,11 @@ public sealed class ChatDemoImportService
                     if (fragments.ValueKind == JsonValueKind.Array)
                     {
                         foreach (var fragment in fragments.EnumerateArray())
-                            parts.Add(ParseFragment(fragment, id, messageId, warnings));
+                            parts.AddRange(ParseFragment(fragment, id, messageId, warnings));
                     }
                     else if (fragments.ValueKind != JsonValueKind.Null)
                     {
-                        parts.Add(ParseFragment(fragments, id, messageId, warnings));
+                        parts.AddRange(ParseFragment(fragments, id, messageId, warnings));
                     }
                 }
                 if (parts.Count == 0 &&
@@ -277,12 +277,12 @@ public sealed class ChatDemoImportService
         }
     }
 
-    private static ContentPart ParseFragment(JsonElement fragment, string sessionId, long messageId, WarningSink warnings)
+    private static List<ContentPart> ParseFragment(JsonElement fragment, string sessionId, long messageId, WarningSink warnings)
     {
         if (fragment.ValueKind == JsonValueKind.String)
-            return ContentPart.OfText(fragment.GetString() ?? "");
+            return [ContentPart.OfText(fragment.GetString() ?? "")];
         if (fragment.ValueKind != JsonValueKind.Object)
-            return new ContentPart(PartKind.Text, ChatDemoJson.GetContentText(fragment));
+            return [new ContentPart(PartKind.Text, ChatDemoJson.GetContentText(fragment))];
 
         var fragmentType = ChatDemoJson.GetString(fragment, "type", "kind", "fragment_type", "fragmentType");
         var localKindText = ChatDemoJson.GetString(fragment, ChatDemoFormat.KindPropertyName);
@@ -301,20 +301,82 @@ public sealed class ChatDemoImportService
         switch (kind)
         {
             case PartKind.File:
-                var fileId = ChatDemoJson.GetString(fragment, "file_id", "fileId", "id");
-                var name = ChatDemoJson.GetString(fragment, "name", "file_name", "fileName", "filename");
-                var mime = ChatDemoJson.GetString(fragment, "mime", "mime_type", "mimeType", "content_type", "contentType");
-                var size = ChatDemoJson.GetInt64(fragment, "size", "file_size", "fileSize");
-                return new ContentPart(kind, text, ChatDemoJson.BuildFileMeta(original, fileId, name, mime, size, null, null));
+                return ParseFileFragments(fragment, text, original, warnings);
             case PartKind.ToolCall:
             case PartKind.ToolResult:
             case PartKind.Risk:
             case PartKind.Raw:
             case PartKind.Image:
-                return new ContentPart(kind, text, embeddedMeta ?? ChatDemoJson.BuildFragmentMeta(fragmentType, original));
+                return [new ContentPart(kind, text, embeddedMeta ?? ChatDemoJson.BuildFragmentMeta(fragmentType, original))];
             default:
-                return new ContentPart(kind, text, embeddedMeta);
+                return [new ContentPart(kind, text, embeddedMeta)];
         }
+    }
+
+    /// <summary>
+    /// 官方 FILE 片段把文件放在 files:[{id,file_name,file_size,is_image,...}] 里（也见过单个对象）；
+    /// 每个文件生成独立的 File part，便于按 id 匹配附件。旧版扁平的 file_id/name 字段仍然兼容。
+    /// </summary>
+    private static List<ContentPart> ParseFileFragments(
+        JsonElement fragment,
+        string? text,
+        string original,
+        WarningSink warnings)
+    {
+        var nested = ChatDemoJson.GetProperty(
+            fragment, "files", "file", "file_list", "fileList", "attachments");
+        var parts = new List<ContentPart>();
+        if (nested is { } nestedValue)
+        {
+            if (nestedValue.ValueKind == JsonValueKind.Array)
+            {
+                var index = 0;
+                foreach (var file in nestedValue.EnumerateArray())
+                {
+                    if (file.ValueKind != JsonValueKind.Object)
+                    {
+                        warnings.Add("FILE 片段的 files 数组里存在非对象元素，已忽略。");
+                        continue;
+                    }
+                    parts.Add(ParseNestedFilePart(file, index++ == 0 ? text : null));
+                }
+            }
+            else if (nestedValue.ValueKind == JsonValueKind.Object)
+            {
+                parts.Add(ParseNestedFilePart(nestedValue, text));
+            }
+            else if (nestedValue.ValueKind != JsonValueKind.Null)
+            {
+                warnings.Add("FILE 片段的 files 字段既不是数组也不是对象，按旧版扁平字段解析。");
+            }
+        }
+        if (parts.Count > 0) return parts;
+
+        var fileId = ChatDemoJson.GetString(fragment, "file_id", "fileId", "id");
+        var name = ChatDemoJson.GetString(fragment, "name", "file_name", "fileName", "filename");
+        var mime = ChatDemoJson.GetString(fragment, "mime", "mime_type", "mimeType", "content_type", "contentType");
+        var size = ChatDemoJson.GetInt64(fragment, "size", "file_size", "fileSize");
+        var isImage = ChatDemoJson.GetBoolean(fragment, "is_image", "isImage");
+        return
+        [
+            new ContentPart(
+                PartKind.File,
+                text,
+                ChatDemoJson.BuildFileMeta(original, fileId, name, mime, size, null, null, isImage)),
+        ];
+    }
+
+    private static ContentPart ParseNestedFilePart(JsonElement file, string? text)
+    {
+        var fileId = ChatDemoJson.GetString(file, "id", "file_id", "fileId", "file_key", "key");
+        var name = ChatDemoJson.GetString(file, "file_name", "fileName", "name", "filename");
+        var mime = ChatDemoJson.GetString(file, "mime_type", "mimeType", "mime", "content_type", "contentType");
+        var size = ChatDemoJson.GetInt64(file, "file_size", "fileSize", "size");
+        var isImage = ChatDemoJson.GetBoolean(file, "is_image", "isImage");
+        return new ContentPart(
+            PartKind.File,
+            text,
+            ChatDemoJson.BuildFileMeta(file.GetRawText(), fileId, name, mime, size, null, null, isImage));
     }
 
     private static string? ReadEmbeddedMeta(JsonElement fragment)
@@ -442,7 +504,8 @@ public sealed class ChatDemoImportService
                             mime: info.Mime ?? match.Mime,
                             size: info.Size ?? match.Size,
                             sha256: match.Sha256,
-                            relativePath: match.RelativePath)));
+                            relativePath: match.RelativePath,
+                            isImage: info.IsImage)));
                 }
                 messages.Add(message with { Parts = parts });
             }

@@ -1,6 +1,7 @@
 using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using Chat.Core;
 using Chat.Storage;
 using Microsoft.Data.Sqlite;
@@ -701,6 +702,216 @@ public sealed class ChatDemoArchiveTests : IDisposable
         Assert.Equal(
             new[] { PartKind.ToolCall, PartKind.ToolCall, PartKind.ToolResult },
             reimported.Select(part => part.Kind).ToArray());
+    }
+
+    [Fact]
+    public async Task Import_ParsesOfficialNestedFileFragments()
+    {
+        var directory = NewDirectory();
+        var textBytes = Encoding.UTF8.GetBytes("hello");
+        var imageBytes = Encoding.UTF8.GetBytes("png123");
+        var textSha = Convert.ToHexStringLower(SHA256.HashData(textBytes));
+        var imageSha = Convert.ToHexStringLower(SHA256.HashData(imageBytes));
+        var zip = CreateZip(directory, archive =>
+        {
+            WriteJson(archive, "manifest.json", ManifestJson);
+            WriteJson(archive, "chat_sessions/s1.json", """
+            {
+              "id": "s1",
+              "title": "Official files",
+              "created_at": "2024-05-01T12:00:00Z",
+              "updated_at": "2024-05-01T12:00:00Z",
+              "messages": [
+                {
+                  "id": 1, "parent_id": null, "role": "USER", "status": "FINISHED",
+                  "fragments": [
+                    {"type": "REQUEST", "content": "see files"},
+                    {
+                      "type": "FILE",
+                      "files": [
+                        {"id": "f1", "file_name": "a.txt", "file_size": 5, "export_path": null, "is_image": false},
+                        {"id": "f2", "file_name": "b.png", "file_size": 6, "export_path": null, "is_image": true},
+                        {"id": "f3", "file_name": "not-exported.txt", "file_size": 7, "export_path": null, "is_image": false}
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+            """);
+            WriteBytes(archive, "chat_sessions/s1_files/f1_a.txt", textBytes);
+            WriteBytes(archive, "chat_sessions/s1_files/f2_b.png", imageBytes);
+        });
+
+        var report = await ChatDemoArchive.ImportAsync(zip, directory, null, TestContext.Current.CancellationToken);
+
+        Assert.Equal(1, report.Added);
+        Assert.Equal(2, report.Files);
+        Assert.Equal(0, report.SkippedFiles);
+
+        var fileParts = new MessageRepository(new ChatDatabase(StoragePaths.DatabaseFile(directory)))
+            .ListBySession("s1").Single().Parts.Where(part => part.Kind == PartKind.File).ToArray();
+        Assert.Equal(3, fileParts.Length);
+        Assert.Equal(new[] { "f1", "f2", "f3" }, fileParts.Select(ReadMetaString("fileId")).ToArray());
+        Assert.Equal(new[] { "a.txt", "b.png", "not-exported.txt" }, fileParts.Select(ReadMetaString("name")).ToArray());
+        Assert.Equal(new long?[] { 5, 6, 7 }, fileParts.Select(ReadMetaLong("size")).ToArray());
+        Assert.True(ReadMetaBool("isImage")(fileParts[1]));
+        Assert.False(ReadMetaBool("isImage")(fileParts[0]));
+        Assert.True(File.Exists(Path.Combine(StoragePaths.FilesDirectory(directory), textSha + ".txt")));
+        Assert.True(File.Exists(Path.Combine(StoragePaths.FilesDirectory(directory), imageSha + ".png")));
+    }
+
+    [Fact]
+    public async Task Import_AcceptsSingleNestedObjectFlatFieldsAndMissingFileId()
+    {
+        var directory = NewDirectory();
+        var soloPayload = Encoding.UTF8.GetBytes("solo");
+        var flatPayload = Encoding.UTF8.GetBytes("flat");
+        var noIdPayload = Encoding.UTF8.GetBytes("noid");
+        var noIdSha = Convert.ToHexStringLower(SHA256.HashData(noIdPayload));
+        var zip = CreateZip(directory, archive =>
+        {
+            WriteJson(archive, "manifest.json", ManifestJson);
+            WriteJson(archive, "chat_sessions/s2.json", """
+            {
+              "id": "s2",
+              "title": "Mixed file shapes",
+              "created_at": "2024-05-01T12:00:00Z",
+              "updated_at": "2024-05-01T12:00:00Z",
+              "messages": [
+                {
+                  "id": 1, "parent_id": null, "role": "USER", "status": "FINISHED",
+                  "fragments": [
+                    {"type": "FILE", "files": {"id": "solo", "file_name": "solo.txt", "file_size": 4}},
+                    {"type": "FILE", "file_id": "flat", "name": "flat.txt", "mime": "text/plain", "size": 4},
+                    {"type": "FILE", "files": [{"file_name": "noid.txt", "file_size": 4}]}
+                  ]
+                }
+              ]
+            }
+            """);
+            WriteBytes(archive, "chat_sessions/s2_files/solo_solo.txt", soloPayload);
+            WriteBytes(archive, "chat_sessions/s2_files/flat_flat.txt", flatPayload);
+            WriteBytes(archive, "chat_sessions/s2_files/noid_noid.txt", noIdPayload);
+        });
+
+        var report = await ChatDemoArchive.ImportAsync(zip, directory, null, TestContext.Current.CancellationToken);
+
+        Assert.Equal(3, report.Files);
+        Assert.Equal(0, report.SkippedFiles);
+        var parts = new MessageRepository(new ChatDatabase(StoragePaths.DatabaseFile(directory)))
+            .ListBySession("s2").Single().Parts.Where(part => part.Kind == PartKind.File).ToArray();
+        Assert.Equal(3, parts.Length);
+        Assert.Equal(new[] { "solo", "flat", "noid" }, parts.Select(ReadMetaString("fileId")).ToArray());
+        Assert.Equal(new[] { "solo.txt", "flat.txt", "noid.txt" }, parts.Select(ReadMetaString("name")).ToArray());
+        Assert.Contains("\"mime\":\"text/plain\"", parts[1].MetaJson);
+        Assert.True(File.Exists(Path.Combine(StoragePaths.FilesDirectory(directory), noIdSha + ".txt")));
+    }
+
+    [Fact]
+    public async Task Export_WritesOfficialNestedFilesAndRoundTrips()
+    {
+        var source = NewDirectory();
+        var textBytes = Encoding.UTF8.GetBytes("alpha");
+        var imageBytes = Encoding.UTF8.GetBytes("beta");
+        var zip = CreateZip(source, archive =>
+        {
+            WriteJson(archive, "manifest.json", ManifestJson);
+            WriteJson(archive, "chat_sessions/nested.json", """
+            {
+              "id": "nested",
+              "title": "Nested export",
+              "created_at": "2024-05-01T12:00:00Z",
+              "updated_at": "2024-05-01T12:00:00Z",
+              "messages": [
+                {
+                  "id": 1, "parent_id": null, "role": "USER", "status": "FINISHED",
+                  "fragments": [
+                    {"type": "FILE", "files": [
+                      {"id": "f1", "file_name": "a.txt", "file_size": 5, "export_path": null, "is_image": false},
+                      {"id": "f2", "file_name": "b.png", "file_size": 4, "export_path": null, "is_image": true}
+                    ]}
+                  ]
+                }
+              ]
+            }
+            """);
+            WriteBytes(archive, "chat_sessions/nested_files/f1_a.txt", textBytes);
+            WriteBytes(archive, "chat_sessions/nested_files/f2_b.png", imageBytes);
+        });
+
+        var first = await ChatDemoArchive.ImportAsync(zip, source, null, TestContext.Current.CancellationToken);
+        Assert.Equal(2, first.Files);
+        Assert.Equal(0, first.SkippedFiles);
+
+        var exportPath = Path.Combine(source, "nested-export.zip");
+        var exported = await ChatDemoArchive.ExportAsync(exportPath, source, null, TestContext.Current.CancellationToken);
+        Assert.Equal(2, exported.Files);
+
+        string? sessionJson = null;
+        using (var stream = File.OpenRead(exportPath))
+        using (var archive = new ZipArchive(stream, ZipArchiveMode.Read))
+        {
+            var entry = archive.Entries.Single(item => item.FullName == "chat_sessions/nested.json");
+            using var reader = new StreamReader(entry.Open(), Encoding.UTF8);
+            sessionJson = reader.ReadToEnd();
+        }
+        Assert.NotNull(sessionJson);
+        using (var document = JsonDocument.Parse(sessionJson!))
+        {
+            var fileFragment = document.RootElement.GetProperty("messages").EnumerateArray()
+                .SelectMany(message => message.GetProperty("fragments").EnumerateArray())
+                .Single(fragment => fragment.GetProperty("type").GetString() == "FILE");
+            Assert.False(fileFragment.TryGetProperty("file_id", out _));
+            Assert.False(fileFragment.TryGetProperty("name", out _));
+            var files = fileFragment.GetProperty("files");
+            Assert.Equal(2, files.GetArrayLength());
+            Assert.All(files.EnumerateArray(), file => Assert.Equal(JsonValueKind.Null, file.GetProperty("export_path").ValueKind));
+            Assert.Equal(
+                new[] { "f1", "f2" },
+                files.EnumerateArray().Select(file => file.GetProperty("id").GetString()).ToArray());
+            Assert.Equal(
+                new[] { "a.txt", "b.png" },
+                files.EnumerateArray().Select(file => file.GetProperty("file_name").GetString()).ToArray());
+            Assert.True(files[1].GetProperty("is_image").GetBoolean());
+        }
+
+        var target = NewDirectory();
+        var second = await ChatDemoArchive.ImportAsync(exportPath, target, null, TestContext.Current.CancellationToken);
+        Assert.Equal(2, second.Files);
+        Assert.Equal(0, second.SkippedFiles);
+        var parts = new MessageRepository(new ChatDatabase(StoragePaths.DatabaseFile(target)))
+            .ListBySession("nested").Single().Parts.Where(part => part.Kind == PartKind.File).ToArray();
+        Assert.Equal(2, parts.Length);
+        Assert.Equal(new[] { "f1", "f2" }, parts.Select(ReadMetaString("fileId")).ToArray());
+        Assert.Equal(new[] { "a.txt", "b.png" }, parts.Select(ReadMetaString("name")).ToArray());
+    }
+
+    private static Func<ContentPart, string?> ReadMetaString(string property)
+    {
+        return part =>
+        {
+            using var document = JsonDocument.Parse(part.MetaJson!);
+            return document.RootElement.TryGetProperty(property, out var value) ? value.GetString() : null;
+        };
+    }
+
+    private static Func<ContentPart, long?> ReadMetaLong(string property)
+    {
+        return part =>
+        {
+            using var document = JsonDocument.Parse(part.MetaJson!);
+            return document.RootElement.TryGetProperty(property, out var value) ? value.GetInt64() : null;
+        };
+    }
+
+    private static Func<ContentPart, bool?> ReadMetaBool(string property)
+    {
+        return part =>
+        {
+            using var document = JsonDocument.Parse(part.MetaJson!);
+            return document.RootElement.TryGetProperty(property, out var value) ? value.GetBoolean() : null;
+        };
     }
 
     private static void InsertFileRow(
