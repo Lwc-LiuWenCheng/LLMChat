@@ -17,6 +17,7 @@ SUITES=(
   "tests/Chat.Providers.OpenAiCompatible.Tests"
   "tests/Chat.Providers.OpenCodeGo.Tests"
   "tests/Chat.Providers.DeepSeek.Tests"
+  "tests/Chat.Gateway.Tests"
   "tests/Chat.Console.Tests"
 )
 
@@ -71,6 +72,25 @@ for project in "${SUITES[@]}"; do
   rows+=("$(printf '%-44s %6s %7s  %s' "$name" "$total" "$failed" "$status")")
 done
 
+# 前端数据层轻量测试：不需要浏览器，用 node --test + fetch stub 验证网关 URL 契约。
+echo
+echo "==> chat-demo 前端数据层（node --test）"
+if [[ -d web/chat-demo/tests && -f web/chat-demo/package.json ]]; then
+  (cd web/chat-demo && node --test tests/*.test.mjs) 2>&1 | tee "$LOG_DIR/chat-demo.log"
+  code=${PIPESTATUS[0]}
+  counts="$(grep -E '^(#|ℹ) (tests|pass|fail) [0-9]+' "$LOG_DIR/chat-demo.log" | tail -3 || true)"
+  if [[ "$code" -eq 0 && "$counts" == *"fail 0"* ]]; then
+    status="PASS"
+    passed=$((passed + 1))
+  else
+    status="FAIL"
+    failures=$((failures + 1))
+  fi
+  rows+=("$(printf '%-44s %6s %7s  %s' 'chat-demo-remoteDb' 'node' '0' "$status")")
+else
+  echo "跳过前端测试：未找到 web/chat-demo/tests"
+fi
+
 echo
 echo "==================== 测试汇总 ===================="
 printf '%-44s %6s %7s  %s\n' "套件" "Total" "Failed" "结果"
@@ -78,7 +98,7 @@ for row in "${rows[@]}"; do
   echo "$row"
 done
 echo "--------------------------------------------------"
-echo "套件：${#SUITES[@]}  通过：$passed  失败：$failures"
+echo "套件：${#rows[@]}  通过：$passed  失败：$failures"
 
 if [[ "$failures" -ne 0 ]]; then
   echo "存在失败的测试套件。" >&2

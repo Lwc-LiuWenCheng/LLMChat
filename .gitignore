@@ -19,3 +19,8 @@ sessions/
 .agent-teams/
 .wiki/
 PROJECT_MEMORY.md
+
+# 第三方前端源码：保留来源说明，不保留上游 git 元数据与依赖产物
+web/chat-demo/.git/
+web/chat-demo/node_modules/
+web/chat-demo/dist/

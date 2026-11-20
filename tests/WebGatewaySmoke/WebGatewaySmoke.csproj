@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- 独立冒烟探针：不在 Chat.slnx / scripts/test.sh 内，由 scripts/web-gateway-smoke.sh 显式构建运行。
+       用于在进程内以假 DeepSeek handler 启动 Chat.Gateway，避免接触真实网络与密钥。 -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>WebGatewaySmoke</AssemblyName>
+    <RootNamespace>WebGatewaySmoke</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <ProjectReference Include="../../src/Chat.Gateway/Chat.Gateway.csproj" />
+    <ProjectReference Include="../../src/Chat.Storage/Chat.Storage.csproj" />
+  </ItemGroup>
+</Project>
